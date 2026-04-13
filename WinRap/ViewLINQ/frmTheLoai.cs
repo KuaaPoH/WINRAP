@@ -13,23 +13,26 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmTheLoai : Form
     {
-        private DataContext db = new DataContext();
-
         public frmTheLoai()
         {
             InitializeComponent();
         }
 
-        private void frmTheLoai_Load(object sender, EventArgs e)
+        private async void frmTheLoai_Load(object sender, EventArgs e)
         {
-            LoadData();
+            await LoadDataAsync();
         }
 
-        private void LoadData()
+        private async Task LoadDataAsync()
         {
             try
             {
-                var list = db.TheLoais.Select(t => new { t.MaTheLoai, t.TenTheLoai }).ToList();
+                var list = await Task.Run(() => {
+                    using (var db = new DataContext())
+                    {
+                        return db.TheLoais.Select(t => new { t.MaTheLoai, t.TenTheLoai }).ToList();
+                    }
+                });
                 dgvTheLoai.DataSource = list;
             }
             catch (Exception ex)
@@ -46,7 +49,7 @@ namespace WinRap.ViewLINQ
             }
         }
 
-        private void btnThem_Click(object sender, EventArgs e)
+        private async void btnThem_Click(object sender, EventArgs e)
         {
             string tenTL = txtTenTheLoai.Text.Trim();
             if (string.IsNullOrEmpty(tenTL))
@@ -57,10 +60,16 @@ namespace WinRap.ViewLINQ
 
             try
             {
-                tblTheLoai tl = new tblTheLoai { TenTheLoai = tenTL };
-                db.TheLoais.Add(tl);
-                db.SaveChanges();
-                LoadData();
+                await Task.Run(() => {
+                    using (var db = new DataContext())
+                    {
+                        tblTheLoai tl = new tblTheLoai { TenTheLoai = tenTL };
+                        db.TheLoais.Add(tl);
+                        db.SaveChanges();
+                    }
+                });
+                await LoadDataAsync();
+                txtTenTheLoai.Clear();
                 MessageBox.Show("Thêm thể loại thành công!");
             }
             catch (Exception ex)
@@ -69,11 +78,11 @@ namespace WinRap.ViewLINQ
             }
         }
 
-        private void btnSua_Click(object sender, EventArgs e)
+        private async void btnSua_Click(object sender, EventArgs e)
         {
-            if (dgvTheLoai.SelectedRows.Count == 0) return;
+            if (dgvTheLoai.CurrentRow == null) return;
 
-            int id = (int)dgvTheLoai.SelectedRows[0].Cells["MaTheLoai"].Value;
+            int id = (int)dgvTheLoai.CurrentRow.Cells["MaTheLoai"].Value;
             string tenTL = txtTenTheLoai.Text.Trim();
 
             if (string.IsNullOrEmpty(tenTL))
@@ -84,14 +93,19 @@ namespace WinRap.ViewLINQ
 
             try
             {
-                var tl = db.TheLoais.Find(id);
-                if (tl != null)
-                {
-                    tl.TenTheLoai = tenTL;
-                    db.SaveChanges();
-                    LoadData();
-                    MessageBox.Show("Cập nhật thành công!");
-                }
+                await Task.Run(() => {
+                    using (var db = new DataContext())
+                    {
+                        var tl = db.TheLoais.Find(id);
+                        if (tl != null)
+                        {
+                            tl.TenTheLoai = tenTL;
+                            db.SaveChanges();
+                        }
+                    }
+                });
+                await LoadDataAsync();
+                MessageBox.Show("Cập nhật thành công!");
             }
             catch (Exception ex)
             {
@@ -99,30 +113,47 @@ namespace WinRap.ViewLINQ
             }
         }
 
-        private void btnXoa_Click(object sender, EventArgs e)
+        private async void btnXoa_Click(object sender, EventArgs e)
         {
-            if (dgvTheLoai.SelectedRows.Count == 0) return;
+            if (dgvTheLoai.CurrentRow == null) return;
 
-            int id = (int)dgvTheLoai.SelectedRows[0].Cells["MaTheLoai"].Value;
-            string tenTL = dgvTheLoai.SelectedRows[0].Cells["TenTheLoai"].Value.ToString();
+            int id = (int)dgvTheLoai.CurrentRow.Cells["MaTheLoai"].Value;
+            string tenTL = dgvTheLoai.CurrentRow.Cells["TenTheLoai"].Value.ToString();
 
             if (MessageBox.Show($"Bạn có chắc chắn muốn xóa thể loại '{tenTL}'?\nLưu ý: Các phim thuộc thể loại này có thể bị ảnh hưởng.", 
                 "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 try
                 {
-                    var tl = db.TheLoais.Find(id);
-                    if (tl != null)
+                    bool success = await Task.Run(() => {
+                        using (var db = new DataContext())
+                        {
+                            var tl = db.TheLoais.Find(id);
+                            if (tl != null)
+                            {
+                                if (tl.Phims.Any()) return false;
+                                db.TheLoais.Remove(tl);
+                                db.SaveChanges();
+                                return true;
+                            }
+                            return false;
+                        }
+                    });
+
+                    if (success)
                     {
-                        db.TheLoais.Remove(tl);
-                        db.SaveChanges();
-                        LoadData();
+                        await LoadDataAsync();
+                        txtTenTheLoai.Clear();
                         MessageBox.Show("Đã xóa thể loại thành công!");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Không thể xóa thể loại này vì đang có phim thuộc thể loại này!");
                     }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Không thể xóa thể loại này (có thể do đang có phim thuộc thể loại này).\nChi tiết: " + ex.Message);
+                    MessageBox.Show("Lỗi khi xóa: " + ex.Message);
                 }
             }
         }

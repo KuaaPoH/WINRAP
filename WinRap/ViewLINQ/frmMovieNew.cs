@@ -83,6 +83,14 @@ namespace WinRap.ViewLINQ
                     return;
                 }
 
+                // Lấy dữ liệu từ UI Thread trước khi vào Task.Run
+                string tenPhim = txtTenPhim.Text.Trim();
+                int maTheLoai = (int)cboTheLoai.SelectedValue;
+                string daoDien = txtDaoDien.Text.Trim();
+                string dienVien = txtDienVien.Text.Trim();
+                string moTa = txtMoTa.Text.Trim();
+                bool trangThai = swTrangThai.Checked;
+
                 string fileName = "";
                 if (!string.IsNullOrEmpty(selectedImagePath))
                 {
@@ -97,15 +105,15 @@ namespace WinRap.ViewLINQ
                     {
                         tblPhim phim = new tblPhim
                         {
-                            TenPhim = txtTenPhim.Text.Trim(),
-                            MaTheLoai = (int)cboTheLoai.SelectedValue,
+                            TenPhim = tenPhim,
+                            MaTheLoai = maTheLoai,
                             ThoiLuong = thoiLuong,
-                            DaoDien = txtDaoDien.Text.Trim(),
-                            DienVien = txtDienVien.Text.Trim(),
-                            MoTa = txtMoTa.Text.Trim(),
+                            DaoDien = daoDien,
+                            DienVien = dienVien,
+                            MoTa = moTa,
                             HinhAnh = fileName,
                             NgayPhatHanh = DateTime.Now,
-                            TrangThai = swTrangThai.Checked
+                            TrangThai = trangThai
                         };
                         context.Phims.Add(phim);
                         context.SaveChanges();

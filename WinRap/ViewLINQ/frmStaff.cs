@@ -71,7 +71,7 @@ namespace WinRap.ViewLINQ
 
         private void btnThem_Click(object sender, EventArgs e)
         {
-            using (frmStaffAction frm = new frmStaffAction())
+            using (frmStaffNew frm = new frmStaffNew())
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
@@ -89,7 +89,7 @@ namespace WinRap.ViewLINQ
             }
 
             int id = (int)dgvStaff.CurrentRow.Cells["MaNguoiDung"].Value;
-            using (frmStaffAction frm = new frmStaffAction(id))
+            using (frmStaffEdit frm = new frmStaffEdit(id))
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
@@ -125,28 +125,6 @@ namespace WinRap.ViewLINQ
                 {
                     MessageBox.Show("Lỗi khi xóa: " + ex.Message);
                 }
-            }
-        }
-
-        private void btnXemChiTiet_Click(object sender, EventArgs e)
-        {
-            if (dgvStaff.CurrentRow == null)
-            {
-                MessageBox.Show("Vui lòng chọn nhân viên để xem chi tiết!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-            int id = (int)dgvStaff.CurrentRow.Cells["MaNguoiDung"].Value;
-            var nv = db.NguoiDungs.Find(id);
-            if (nv != null)
-            {
-                string detail = $"Mã nhân viên: {nv.MaNguoiDung}\n" +
-                                $"Họ tên: {nv.HoTen}\n" +
-                                $"Chức vụ: {nv.Quyen}\n" +
-                                $"Số điện thoại: {nv.SoDienThoai}\n" +
-                                $"Tên đăng nhập: {nv.TenDangNhap}\n" +
-                                $"Trạng thái: {(nv.TrangThai == true ? "Hoạt động" : "Khóa")}";
-                MessageBox.Show(detail, "Chi tiết nhân viên", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 

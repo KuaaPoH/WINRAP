@@ -45,7 +45,6 @@ namespace WinRap.ViewLINQ
             // pnlActions
             // 
             this.pnlActions.BackColor = System.Drawing.Color.White;
-            this.pnlActions.Controls.Add(this.btnXemChiTiet);
             this.pnlActions.Controls.Add(this.btnXoa);
             this.pnlActions.Controls.Add(this.btnSua);
             this.pnlActions.Controls.Add(this.btnThem);
@@ -54,20 +53,6 @@ namespace WinRap.ViewLINQ
             this.pnlActions.Name = "pnlActions";
             this.pnlActions.Size = new System.Drawing.Size(950, 70);
             this.pnlActions.TabIndex = 1;
-            // 
-            // btnXemChiTiet
-            // 
-            this.btnXemChiTiet.Animated = true;
-            this.btnXemChiTiet.BorderRadius = 8;
-            this.btnXemChiTiet.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(184)))), ((int)(((byte)(152)))));
-            this.btnXemChiTiet.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.btnXemChiTiet.ForeColor = System.Drawing.Color.White;
-            this.btnXemChiTiet.Location = new System.Drawing.Point(25, 15);
-            this.btnXemChiTiet.Name = "btnXemChiTiet";
-            this.btnXemChiTiet.Size = new System.Drawing.Size(130, 40);
-            this.btnXemChiTiet.TabIndex = 3;
-            this.btnXemChiTiet.Text = "Xem chi tiết";
-            this.btnXemChiTiet.Click += new System.EventHandler(this.btnXemChiTiet_Click);
             // 
             // btnXoa
             // 

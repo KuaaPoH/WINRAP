@@ -95,7 +95,7 @@ namespace WinRap.ViewLINQ
             this.lblTrangThaiValue.AutoSize = true;
             this.lblTrangThaiValue.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.lblTrangThaiValue.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(184)))), ((int)(((byte)(152)))));
-            this.lblTrangThaiValue.Location = new System.Drawing.Point(125, 480);
+            this.lblTrangThaiValue.Location = new System.Drawing.Point(125, 385);
             this.lblTrangThaiValue.Name = "lblTrangThaiValue";
             this.lblTrangThaiValue.Size = new System.Drawing.Size(84, 19);
             this.lblTrangThaiValue.TabIndex = 18;
@@ -106,7 +106,7 @@ namespace WinRap.ViewLINQ
             this.lblTrangThai.AutoSize = true;
             this.lblTrangThai.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.lblTrangThai.ForeColor = System.Drawing.Color.DimGray;
-            this.lblTrangThai.Location = new System.Drawing.Point(30, 480);
+            this.lblTrangThai.Location = new System.Drawing.Point(34, 385);
             this.lblTrangThai.Name = "lblTrangThai";
             this.lblTrangThai.Size = new System.Drawing.Size(79, 19);
             this.lblTrangThai.TabIndex = 17;
@@ -119,7 +119,7 @@ namespace WinRap.ViewLINQ
             this.btnDong.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(108)))), ((int)(((byte)(117)))), ((int)(((byte)(125)))));
             this.btnDong.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnDong.ForeColor = System.Drawing.Color.White;
-            this.btnDong.Location = new System.Drawing.Point(265, 530);
+            this.btnDong.Location = new System.Drawing.Point(35, 427);
             this.btnDong.Name = "btnDong";
             this.btnDong.Size = new System.Drawing.Size(120, 40);
             this.btnDong.TabIndex = 16;
@@ -132,9 +132,9 @@ namespace WinRap.ViewLINQ
             this.picPoster.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.picPoster.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(245)))), ((int)(((byte)(250)))));
             this.picPoster.ImageRotate = 0F;
-            this.picPoster.Location = new System.Drawing.Point(360, 215);
+            this.picPoster.Location = new System.Drawing.Point(658, 75);
             this.picPoster.Name = "picPoster";
-            this.picPoster.Size = new System.Drawing.Size(260, 200);
+            this.picPoster.Size = new System.Drawing.Size(260, 351);
             this.picPoster.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picPoster.TabIndex = 13;
             this.picPoster.TabStop = false;
@@ -144,7 +144,7 @@ namespace WinRap.ViewLINQ
             this.lblPoster.AutoSize = true;
             this.lblPoster.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.lblPoster.ForeColor = System.Drawing.Color.DimGray;
-            this.lblPoster.Location = new System.Drawing.Point(360, 190);
+            this.lblPoster.Location = new System.Drawing.Point(658, 50);
             this.lblPoster.Name = "lblPoster";
             this.lblPoster.Size = new System.Drawing.Size(56, 19);
             this.lblPoster.TabIndex = 12;
@@ -158,14 +158,14 @@ namespace WinRap.ViewLINQ
             this.txtMoTa.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
             this.txtMoTa.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.txtMoTa.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.txtMoTa.Location = new System.Drawing.Point(30, 340);
+            this.txtMoTa.Location = new System.Drawing.Point(34, 218);
             this.txtMoTa.Multiline = true;
             this.txtMoTa.Name = "txtMoTa";
             this.txtMoTa.PasswordChar = '\0';
             this.txtMoTa.PlaceholderText = "";
             this.txtMoTa.ReadOnly = true;
             this.txtMoTa.SelectedText = "";
-            this.txtMoTa.Size = new System.Drawing.Size(300, 110);
+            this.txtMoTa.Size = new System.Drawing.Size(300, 141);
             this.txtMoTa.TabIndex = 11;
             // 
             // lblMoTa
@@ -173,7 +173,7 @@ namespace WinRap.ViewLINQ
             this.lblMoTa.AutoSize = true;
             this.lblMoTa.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.lblMoTa.ForeColor = System.Drawing.Color.DimGray;
-            this.lblMoTa.Location = new System.Drawing.Point(30, 315);
+            this.lblMoTa.Location = new System.Drawing.Point(34, 193);
             this.lblMoTa.Name = "lblMoTa";
             this.lblMoTa.Size = new System.Drawing.Size(52, 19);
             this.lblMoTa.TabIndex = 10;
@@ -187,14 +187,14 @@ namespace WinRap.ViewLINQ
             this.txtDienVien.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
             this.txtDienVien.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.txtDienVien.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.txtDienVien.Location = new System.Drawing.Point(30, 215);
+            this.txtDienVien.Location = new System.Drawing.Point(360, 218);
             this.txtDienVien.Multiline = true;
             this.txtDienVien.Name = "txtDienVien";
             this.txtDienVien.PasswordChar = '\0';
             this.txtDienVien.PlaceholderText = "";
             this.txtDienVien.ReadOnly = true;
             this.txtDienVien.SelectedText = "";
-            this.txtDienVien.Size = new System.Drawing.Size(300, 80);
+            this.txtDienVien.Size = new System.Drawing.Size(260, 141);
             this.txtDienVien.TabIndex = 9;
             // 
             // lblDienVien
@@ -202,7 +202,7 @@ namespace WinRap.ViewLINQ
             this.lblDienVien.AutoSize = true;
             this.lblDienVien.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.lblDienVien.ForeColor = System.Drawing.Color.DimGray;
-            this.lblDienVien.Location = new System.Drawing.Point(30, 190);
+            this.lblDienVien.Location = new System.Drawing.Point(360, 193);
             this.lblDienVien.Name = "lblDienVien";
             this.lblDienVien.Size = new System.Drawing.Size(78, 20);
             this.lblDienVien.TabIndex = 8;

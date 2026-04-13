@@ -122,11 +122,17 @@
     <Compile Include="ViewLINQ\frmCustomer.Designer.cs">
       <DependentUpon>frmCustomer.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewLINQ\frmCustomerAction.cs">
+    <Compile Include="ViewLINQ\frmCustomerNew.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ViewLINQ\frmCustomerAction.Designer.cs">
-      <DependentUpon>frmCustomerAction.cs</DependentUpon>
+    <Compile Include="ViewLINQ\frmCustomerNew.Designer.cs">
+      <DependentUpon>frmCustomerNew.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLINQ\frmCustomerEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmCustomerEdit.Designer.cs">
+      <DependentUpon>frmCustomerEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="ViewLINQ\frmStaff.cs">
       <SubType>Form</SubType>
@@ -134,11 +140,17 @@
     <Compile Include="ViewLINQ\frmStaff.Designer.cs">
       <DependentUpon>frmStaff.cs</DependentUpon>
     </Compile>
-    <Compile Include="ViewLINQ\frmStaffAction.cs">
+    <Compile Include="ViewLINQ\frmStaffNew.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ViewLINQ\frmStaffAction.Designer.cs">
-      <DependentUpon>frmStaffAction.cs</DependentUpon>
+    <Compile Include="ViewLINQ\frmStaffNew.Designer.cs">
+      <DependentUpon>frmStaffNew.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLINQ\frmStaffEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmStaffEdit.Designer.cs">
+      <DependentUpon>frmStaffEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="ViewLINQ\frmTheLoai.cs">
       <SubType>Form</SubType>

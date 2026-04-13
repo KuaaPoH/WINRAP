@@ -72,7 +72,7 @@ namespace WinRap.ViewLINQ
 
         private void btnThem_Click(object sender, EventArgs e)
         {
-            using (frmCustomerAction frm = new frmCustomerAction())
+            using (frmCustomerNew frm = new frmCustomerNew())
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
@@ -89,7 +89,7 @@ namespace WinRap.ViewLINQ
                 return;
             }
 
-            using (frmCustomerAction frm = new frmCustomerAction(selectedCustomerID))
+            using (frmCustomerEdit frm = new frmCustomerEdit(selectedCustomerID))
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
@@ -130,26 +130,6 @@ namespace WinRap.ViewLINQ
                 {
                     MessageBox.Show("Lỗi khi xóa: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-            }
-        }
-
-        private void btnXemChiTiet_Click(object sender, EventArgs e)
-        {
-            if (selectedCustomerID == -1)
-            {
-                MessageBox.Show("Vui lòng chọn khách hàng để xem chi tiết!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-
-            var kh = db.KhachHangs.Find(selectedCustomerID);
-            if (kh != null)
-            {
-                string detail = $"Mã khách hàng: {kh.MaKhachHang}\n" +
-                                $"Họ tên: {kh.HoTen}\n" +
-                                $"Số điện thoại: {kh.SoDienThoai}\n" +
-                                $"Email: {kh.Email}\n" +
-                                $"Điểm tích lũy: {kh.DiemTichLuy}";
-                MessageBox.Show(detail, "Chi tiết khách hàng", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
