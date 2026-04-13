@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.props" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4C84FA81-4AA3-4CFA-BCAC-3F596180C3AF}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>WinRap</RootNamespace>
+    <AssemblyName>WinRap</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.5.1\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
+    <Reference Include="Guna.UI2, Version=2.0.4.7, Culture=neutral, PublicKeyToken=8b9d14aa5142e261, processorArchitecture=MSIL">
+      <HintPath>..\packages\Guna.UI2.WinForms.2.0.4.7\lib\net472\Guna.UI2.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ViewLINQ\frmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmMain.Designer.cs">
+      <DependentUpon>frmMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLINQ\frmMovie.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmMovie.Designer.cs">
+      <DependentUpon>frmMovie.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLINQ\frmMovieEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmMovieEdit.Designer.cs">
+      <DependentUpon>frmMovieEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLINQ\frmMovieDetail.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmMovieDetail.Designer.cs">
+      <DependentUpon>frmMovieDetail.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLINQ\frmMovieNew.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmMovieNew.Designer.cs">
+      <DependentUpon>frmMovieNew.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLINQ\frmRoom.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmRoom.Designer.cs">
+      <DependentUpon>frmRoom.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLINQ\frmShowtime.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmShowtime.Designer.cs">
+      <DependentUpon>frmShowtime.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLINQ\frmSeatLayout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmSeatLayout.Designer.cs">
+      <DependentUpon>frmSeatLayout.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLINQ\frmTicket.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmTicket.Designer.cs">
+      <DependentUpon>frmTicket.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLINQ\frmCustomer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmCustomer.Designer.cs">
+      <DependentUpon>frmCustomer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLINQ\frmCustomerAction.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmCustomerAction.Designer.cs">
+      <DependentUpon>frmCustomerAction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLINQ\frmStaff.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmStaff.Designer.cs">
+      <DependentUpon>frmStaff.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLINQ\frmStaffAction.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmStaffAction.Designer.cs">
+      <DependentUpon>frmStaffAction.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLINQ\frmTheLoai.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmTheLoai.Designer.cs">
+      <DependentUpon>frmTheLoai.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ViewLINQ\frmThongKe.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmThongKe.Designer.cs">
+      <DependentUpon>frmThongKe.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Model\DataContext.cs" />
+    <Compile Include="Model\tblGhe.cs" />
+    <Compile Include="Model\tblKhachHang.cs" />
+    <Compile Include="Model\tblLoaiGhe.cs" />
+    <Compile Include="Model\tblNguoiDung.cs" />
+    <Compile Include="Model\tblPhim.cs" />
+    <Compile Include="Model\tblPhongChieu.cs" />
+    <Compile Include="Model\tblSuatChieu.cs" />
+    <Compile Include="Model\tblTheLoai.cs" />
+    <Compile Include="Model\tblVe.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ViewLINQ\frmMain.resx">
+      <DependentUpon>frmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewLINQ\frmMovie.resx">
+      <DependentUpon>frmMovie.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewLINQ\frmMovieNew.resx">
+      <DependentUpon>frmMovieNew.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewLINQ\frmRoom.resx">
+      <DependentUpon>frmRoom.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewLINQ\frmSeatLayout.resx">
+      <DependentUpon>frmSeatLayout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewLINQ\frmShowtime.resx">
+      <DependentUpon>frmShowtime.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.props'))" />
+    <Error Condition="!Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\EntityFramework.6.5.1\build\EntityFramework.targets'))" />
+  </Target>
+  <Import Project="..\packages\EntityFramework.6.5.1\build\EntityFramework.targets" Condition="Exists('..\packages\EntityFramework.6.5.1\build\EntityFramework.targets')" />
+</Project>
