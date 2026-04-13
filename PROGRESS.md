@@ -9,7 +9,7 @@ Dự án xây dựng ứng dụng quản lý rạp chiếu phim bằng **C# Wind
 
 ## 2. Tiến độ triển khai
 
-### Giai đoạn 1: Giao diện (UI) - Hoàn thành 95%
+### Giai đoạn 1: Giao diện (UI) - Hoàn thành 100%
 - [x] **frmMain:** Menu điều hướng mượt mà (Singleton).
 - [x] **frmMovie:** Giao diện quản lý phim tối giản, tích hợp thanh lọc/tìm kiếm.
 - [x] **frmCustomer:** Giao diện quản lý khách hàng đồng bộ, tích hợp lọc theo điểm.
@@ -17,18 +17,21 @@ Dự án xây dựng ứng dụng quản lý rạp chiếu phim bằng **C# Wind
 - [x] **Bộ 3 Form Overlay cho Phim:** `frmMovieNew`, `frmMovieEdit`, `frmMovieDetail`.
 - [x] **Bộ đôi Form cho Khách hàng & Nhân viên:** Tách thành `New` và `Edit` riêng biệt, chuẩn hóa layout.
 - [x] **frmTheLoai:** Quản lý thể loại phim với cơ chế async/await.
-- [ ] Hoàn thiện giao diện cho Suất chiếu.
+- [x] **frmRoom:** Hiển thị danh sách phòng chiếu dưới dạng Card (Dữ liệu từ CSDL).
+- [x] **frmShowtime:** Lập lịch chiếu phim với cơ chế State Management (Hoàn thành).
 
-### Giai đoạn 2: Kết nối dữ liệu & LINQ - Hoàn thành 90%
+### Giai đoạn 2: Kết nối dữ liệu & LINQ - Đang triển khai
 - [x] Cấu hình Entity Framework 6 và DataContext.
-- [x] Lập trình LINQ cho Tìm kiếm và Lọc dữ liệu Real-time trên Grid.
-- [x] Xử lý lưu dữ liệu và hình ảnh Poster cho Phim (Sửa lỗi Cross-thread).
-- [x] Hoàn thiện CRUD cho Khách hàng và Nhân viên (MD5 Hash cho mật khẩu).
-- [x] Hoàn thiện CRUD cho Thể loại.
-- [ ] Hoàn thiện các chức năng nghiệp vụ nâng cao (Bán vé, In hóa đơn).
+- [x] Hoàn thiện CRUD cho Khách hàng, Nhân viên, Thể loại và Phim.
+- [x] Hoàn thiện CRUD cho Suất chiếu (Kiểm tra trùng lịch, xuyên đêm).
+- [ ] **frmRoom:** Lập trình logic Thêm/Sửa/Xóa phòng chiếu (Hiện tại mới chỉ nhận dữ liệu).
+- [ ] **frmTicket:** Lập trình logic Bán vé và Sơ đồ ghế động.
+- [ ] **Thống kê:** Lập trình báo cáo doanh thu.
+
+### Giai đoạn 3: Nghiệp vụ & Bảo mật
+- [ ] Lập trình in hóa đơn vé.
+- [ ] **frmLogin:** Hoàn thiện bảo mật hệ thống.
 ### Giai đoạn 3: Nghiệp vụ & Bảo mật
 - [ ] Lập trình logic bán vé và in hóa đơn.
 - [ ] **frmLogin:** Hoàn thiện bảo mật hệ thống.
 
----
-*Cập nhật lần cuối: 13/04/2026 bởi Gemini CLI*

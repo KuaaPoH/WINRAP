@@ -21,6 +21,8 @@ namespace WinRap.ViewLINQ
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnlInput = new Guna.UI2.WinForms.Guna2Panel();
+            this.btnLuu = new Guna.UI2.WinForms.Guna2Button();
+            this.btnQuayLai = new Guna.UI2.WinForms.Guna2Button();
             this.btnLamMoi = new Guna.UI2.WinForms.Guna2Button();
             this.btnXoa = new Guna.UI2.WinForms.Guna2Button();
             this.btnSua = new Guna.UI2.WinForms.Guna2Button();
@@ -31,9 +33,9 @@ namespace WinRap.ViewLINQ
             this.lblStartTime = new System.Windows.Forms.Label();
             this.dtpDate = new Guna.UI2.WinForms.Guna2DateTimePicker();
             this.lblDate = new System.Windows.Forms.Label();
-            this.txtRoom = new Guna.UI2.WinForms.Guna2TextBox();
+            this.cboRoom = new Guna.UI2.WinForms.Guna2ComboBox();
             this.lblRoom = new System.Windows.Forms.Label();
-            this.txtMovie = new Guna.UI2.WinForms.Guna2TextBox();
+            this.cboMovie = new Guna.UI2.WinForms.Guna2ComboBox();
             this.lblMovie = new System.Windows.Forms.Label();
             this.lblTitleInput = new System.Windows.Forms.Label();
             this.pnlTop = new Guna.UI2.WinForms.Guna2Panel();
@@ -56,6 +58,8 @@ namespace WinRap.ViewLINQ
             // pnlInput
             // 
             this.pnlInput.BackColor = System.Drawing.Color.White;
+            this.pnlInput.Controls.Add(this.btnQuayLai);
+            this.pnlInput.Controls.Add(this.btnLuu);
             this.pnlInput.Controls.Add(this.btnLamMoi);
             this.pnlInput.Controls.Add(this.btnXoa);
             this.pnlInput.Controls.Add(this.btnSua);
@@ -66,9 +70,9 @@ namespace WinRap.ViewLINQ
             this.pnlInput.Controls.Add(this.lblStartTime);
             this.pnlInput.Controls.Add(this.dtpDate);
             this.pnlInput.Controls.Add(this.lblDate);
-            this.pnlInput.Controls.Add(this.txtRoom);
+            this.pnlInput.Controls.Add(this.cboRoom);
             this.pnlInput.Controls.Add(this.lblRoom);
-            this.pnlInput.Controls.Add(this.txtMovie);
+            this.pnlInput.Controls.Add(this.cboMovie);
             this.pnlInput.Controls.Add(this.lblMovie);
             this.pnlInput.Controls.Add(this.lblTitleInput);
             this.pnlInput.Dock = System.Windows.Forms.DockStyle.Left;
@@ -76,6 +80,36 @@ namespace WinRap.ViewLINQ
             this.pnlInput.Name = "pnlInput";
             this.pnlInput.Size = new System.Drawing.Size(300, 718);
             this.pnlInput.TabIndex = 0;
+            // 
+            // btnLuu
+            // 
+            this.btnLuu.Animated = true;
+            this.btnLuu.BorderRadius = 8;
+            this.btnLuu.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(46)))), ((int)(((byte)(204)))), ((int)(((byte)(113)))));
+            this.btnLuu.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnLuu.ForeColor = System.Drawing.Color.White;
+            this.btnLuu.Location = new System.Drawing.Point(25, 496);
+            this.btnLuu.Name = "btnLuu";
+            this.btnLuu.Size = new System.Drawing.Size(120, 40);
+            this.btnLuu.TabIndex = 15;
+            this.btnLuu.Text = "Lưu lại";
+            this.btnLuu.Visible = false;
+            this.btnLuu.Click += new System.EventHandler(this.btnLuu_Click);
+            // 
+            // btnQuayLai
+            // 
+            this.btnQuayLai.Animated = true;
+            this.btnQuayLai.BorderRadius = 8;
+            this.btnQuayLai.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(149)))), ((int)(((byte)(165)))), ((int)(((byte)(166)))));
+            this.btnQuayLai.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.btnQuayLai.ForeColor = System.Drawing.Color.White;
+            this.btnQuayLai.Location = new System.Drawing.Point(155, 496);
+            this.btnQuayLai.Name = "btnQuayLai";
+            this.btnQuayLai.Size = new System.Drawing.Size(120, 40);
+            this.btnQuayLai.TabIndex = 16;
+            this.btnQuayLai.Text = "Hủy bỏ";
+            this.btnQuayLai.Visible = false;
+            this.btnQuayLai.Click += new System.EventHandler(this.btnQuayLai_Click);
             // 
             // btnLamMoi
             // 
@@ -235,25 +269,21 @@ namespace WinRap.ViewLINQ
             this.lblDate.TabIndex = 5;
             this.lblDate.Text = "Ngày chiếu:";
             // 
-            // txtRoom
+            // cboRoom
             // 
-            this.txtRoom.BorderRadius = 8;
-            this.txtRoom.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtRoom.DefaultText = "";
-            this.txtRoom.DisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(208)))), ((int)(((byte)(208)))));
-            this.txtRoom.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(226)))), ((int)(((byte)(226)))));
-            this.txtRoom.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
-            this.txtRoom.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
-            this.txtRoom.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.txtRoom.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtRoom.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.txtRoom.Location = new System.Drawing.Point(25, 171);
-            this.txtRoom.Name = "txtRoom";
-            this.txtRoom.PlaceholderText = "Phòng chiếu...";
-            this.txtRoom.ReadOnly = true;
-            this.txtRoom.SelectedText = "";
-            this.txtRoom.Size = new System.Drawing.Size(250, 36);
-            this.txtRoom.TabIndex = 4;
+            this.cboRoom.BackColor = System.Drawing.Color.Transparent;
+            this.cboRoom.BorderRadius = 8;
+            this.cboRoom.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cboRoom.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboRoom.FocusedColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.cboRoom.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.cboRoom.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cboRoom.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(88)))), ((int)(((byte)(112)))));
+            this.cboRoom.ItemHeight = 30;
+            this.cboRoom.Location = new System.Drawing.Point(25, 171);
+            this.cboRoom.Name = "cboRoom";
+            this.cboRoom.Size = new System.Drawing.Size(250, 36);
+            this.cboRoom.TabIndex = 4;
             // 
             // lblRoom
             // 
@@ -262,29 +292,25 @@ namespace WinRap.ViewLINQ
             this.lblRoom.ForeColor = System.Drawing.Color.DimGray;
             this.lblRoom.Location = new System.Drawing.Point(25, 146);
             this.lblRoom.Name = "lblRoom";
-            this.lblRoom.Size = new System.Drawing.Size(94, 19);
+            this.lblRoom.Size = new System.Drawing.Size(56, 19);
             this.lblRoom.TabIndex = 3;
-            this.lblRoom.Text = "Chọn phòng:";
+            this.lblRoom.Text = "Phòng:";
             // 
-            // txtMovie
+            // cboMovie
             // 
-            this.txtMovie.BorderRadius = 8;
-            this.txtMovie.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtMovie.DefaultText = "";
-            this.txtMovie.DisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(208)))), ((int)(((byte)(208)))));
-            this.txtMovie.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(226)))), ((int)(((byte)(226)))));
-            this.txtMovie.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
-            this.txtMovie.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
-            this.txtMovie.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.txtMovie.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.txtMovie.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.txtMovie.Location = new System.Drawing.Point(25, 91);
-            this.txtMovie.Name = "txtMovie";
-            this.txtMovie.PlaceholderText = "Tên phim...";
-            this.txtMovie.ReadOnly = true;
-            this.txtMovie.SelectedText = "";
-            this.txtMovie.Size = new System.Drawing.Size(250, 36);
-            this.txtMovie.TabIndex = 2;
+            this.cboMovie.BackColor = System.Drawing.Color.Transparent;
+            this.cboMovie.BorderRadius = 8;
+            this.cboMovie.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cboMovie.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboMovie.FocusedColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.cboMovie.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.cboMovie.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.cboMovie.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(68)))), ((int)(((byte)(88)))), ((int)(((byte)(112)))));
+            this.cboMovie.ItemHeight = 30;
+            this.cboMovie.Location = new System.Drawing.Point(25, 91);
+            this.cboMovie.Name = "cboMovie";
+            this.cboMovie.Size = new System.Drawing.Size(250, 36);
+            this.cboMovie.TabIndex = 2;
             // 
             // lblMovie
             // 
@@ -293,9 +319,9 @@ namespace WinRap.ViewLINQ
             this.lblMovie.ForeColor = System.Drawing.Color.DimGray;
             this.lblMovie.Location = new System.Drawing.Point(25, 66);
             this.lblMovie.Name = "lblMovie";
-            this.lblMovie.Size = new System.Drawing.Size(85, 19);
+            this.lblMovie.Size = new System.Drawing.Size(47, 19);
             this.lblMovie.TabIndex = 1;
-            this.lblMovie.Text = "Chọn phim:";
+            this.lblMovie.Text = "Phim:";
             // 
             // lblTitleInput
             // 
@@ -493,6 +519,7 @@ namespace WinRap.ViewLINQ
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "frmShowtime";
             this.Text = "frmShowtime";
+            this.Load += new System.EventHandler(this.frmShowtime_Load);
             this.pnlInput.ResumeLayout(false);
             this.pnlInput.PerformLayout();
             this.pnlTop.ResumeLayout(false);
@@ -508,9 +535,9 @@ namespace WinRap.ViewLINQ
         private System.Windows.Forms.Label lblTitleInput;
         private Guna.UI2.WinForms.Guna2Panel pnlTop;
         private Guna.UI2.WinForms.Guna2DataGridView dgvShowtime;
-        private Guna.UI2.WinForms.Guna2TextBox txtMovie;
+        private Guna.UI2.WinForms.Guna2ComboBox cboMovie;
         private System.Windows.Forms.Label lblMovie;
-        private Guna.UI2.WinForms.Guna2TextBox txtRoom;
+        private Guna.UI2.WinForms.Guna2ComboBox cboRoom;
         private System.Windows.Forms.Label lblRoom;
         private Guna.UI2.WinForms.Guna2DateTimePicker dtpDate;
         private System.Windows.Forms.Label lblDate;
@@ -522,6 +549,8 @@ namespace WinRap.ViewLINQ
         private Guna.UI2.WinForms.Guna2Button btnLamMoi;
         private Guna.UI2.WinForms.Guna2Button btnXoa;
         private Guna.UI2.WinForms.Guna2Button btnSua;
+        private Guna.UI2.WinForms.Guna2Button btnLuu;
+        private Guna.UI2.WinForms.Guna2Button btnQuayLai;
         private System.Windows.Forms.Label lblFilterDate;
         private Guna.UI2.WinForms.Guna2DateTimePicker dtpFilterDate;
         private Guna.UI2.WinForms.Guna2ComboBox cboFilterRoom;
