@@ -34,7 +34,7 @@ namespace WinRap.ViewLINQ
             {
                 using (var db = new DataContext())
                 {
-                    var phims = await db.Phims.ToListAsync();
+                    var phims = await db.Phims.Where(p => p.TrangThai == true).ToListAsync();
                     if (phims.Count > 0)
                     {
                         cboMovie.DataSource = null;
@@ -43,7 +43,7 @@ namespace WinRap.ViewLINQ
                         cboMovie.DataSource = phims;
                     }
 
-                    var phongs = await db.PhongChieus.ToListAsync();
+                    var phongs = await db.PhongChieus.Where(p => p.TrangThai == "Sẵn sàng").ToListAsync();
                     if (phongs.Count > 0)
                     {
                         cboRoom.DataSource = null;

@@ -15,55 +15,50 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmRoom : Form
     {
-        private Timer updateTimer;
-
         public frmRoom()
         {
             InitializeComponent();
-            
-            updateTimer = new Timer();
-            updateTimer.Interval = 60000; 
-            updateTimer.Tick += (s, e) => LoadRoomCardsAsync();
-            updateTimer.Start();
+            this.DoubleBuffered = true;
         }
 
         private async void frmRoom_Load(object sender, EventArgs e)
         {
-            await CheckAndInitDefaultRooms();
-            await LoadRoomCardsAsync();
+            await LoadDataAsync();
         }
 
-        private async Task CheckAndInitDefaultRooms()
+        private void btnTab_Click(object sender, EventArgs e)
         {
-            try
+            Guna2Button btn = sender as Guna2Button;
+            if (btn == btnTabMonitor)
             {
-                using (var db = new DataContext())
-                {
-                    if (!await db.PhongChieus.AnyAsync())
-                    {
-                        var defaultRooms = new List<tblPhongChieu>
-                        {
-                            new tblPhongChieu { TenPhong = "Phòng 01", LoaiPhong = "IMAX", TongSoGhe = 120, SoHang = 10, SoCot = 12, TrangThai = "Hoạt động" },
-                            new tblPhongChieu { TenPhong = "Phòng 02", LoaiPhong = "2D", TongSoGhe = 80, SoHang = 8, SoCot = 10, TrangThai = "Hoạt động" },
-                            new tblPhongChieu { TenPhong = "Phòng 03", LoaiPhong = "3D", TongSoGhe = 64, SoHang = 8, SoCot = 8, TrangThai = "Bảo trì" },
-                            new tblPhongChieu { TenPhong = "Phòng 04", LoaiPhong = "2D", TongSoGhe = 80, SoHang = 8, SoCot = 10, TrangThai = "Hoạt động" },
-                            new tblPhongChieu { TenPhong = "Phòng 05", LoaiPhong = "2D", TongSoGhe = 80, SoHang = 8, SoCot = 10, TrangThai = "Hoạt động" },
-                            new tblPhongChieu { TenPhong = "Phòng 06", LoaiPhong = "3D", TongSoGhe = 48, SoHang = 6, SoCot = 8, TrangThai = "Hoạt động" }
-                        };
-                        db.PhongChieus.AddRange(defaultRooms);
-                        await db.SaveChangesAsync();
-                    }
-                }
+                pnlMonitor.Visible = true;
+                pnlConfig.Visible = false;
+                pnlMonitor.BringToFront();
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show("Lỗi khởi tạo phòng: " + ex.Message);
+                pnlMonitor.Visible = false;
+                pnlConfig.Visible = true;
+                pnlConfig.BringToFront();
+            }
+        }
+
+        private async Task LoadDataAsync()
+        {
+            this.SuspendLayout();
+            try 
+            {
+                await Task.WhenAll(LoadRoomCardsAsync(), LoadRoomGridAsync());
+            }
+            finally 
+            {
+                this.ResumeLayout();
             }
         }
 
         private async void btnRefresh_Click(object sender, EventArgs e)
         {
-            await LoadRoomCardsAsync();
+            await LoadDataAsync();
         }
 
         private async Task LoadRoomCardsAsync()
@@ -75,26 +70,22 @@ namespace WinRap.ViewLINQ
 
                 using (var db = new DataContext())
                 {
-                    var rooms = await db.PhongChieus
-                        .Include(p => p.SuatChieus)
-                        .ToListAsync();
+                    var rooms = await db.PhongChieus.Include(p => p.SuatChieus).ToListAsync();
 
                     foreach (var room in rooms)
                     {
-                        // Lấy suất chiếu đang diễn ra hoặc sắp tới gần nhất
                         var currentShow = room.SuatChieus
                             .Where(s => s.NgayChieu == now.Date && s.GioKetThuc > now.TimeOfDay)
-                            .OrderBy(s => s.GioBatDau)
-                            .FirstOrDefault();
+                            .OrderBy(s => s.GioBatDau).FirstOrDefault();
 
                         string movieName = "N/A";
-                        string status = room.TrangThai ?? "Hoạt động";
-                        Color statusColor = Color.FromArgb(0, 184, 148); // Green
+                        string status = room.TrangThai ?? "Sẵn sàng";
+                        Color statusColor = Color.FromArgb(0, 184, 148);
                         int soldSeats = 0;
-                        DateTime? start = null;
-                        DateTime? end = null;
+                        DateTime? start = null, end = null;
 
-                        if (status == "Bảo trì") statusColor = Color.FromArgb(255, 82, 82); // Red
+                        if (status == "Bảo trì") statusColor = Color.FromArgb(255, 82, 82);
+                        else if (status == "Đang dọn dẹp") statusColor = Color.FromArgb(94, 148, 255);
 
                         if (currentShow != null)
                         {
@@ -102,61 +93,71 @@ namespace WinRap.ViewLINQ
                             movieName = phim?.TenPhim ?? "N/A";
                             start = now.Date.Add(currentShow.GioBatDau);
                             end = now.Date.Add(currentShow.GioKetThuc ?? currentShow.GioBatDau.Add(TimeSpan.FromHours(2)));
-                            
-                            // Giả lập số vé đã bán dựa trên mã suất chiếu (thực tế sẽ đếm từ tblVe)
                             soldSeats = await db.Ves.CountAsync(v => v.MaSuatChieu == currentShow.MaSuatChieu);
-                            
                             if (start <= now && end > now) status = "Đang chiếu";
                             else if (start > now) { status = "Sắp chiếu"; statusColor = Color.FromArgb(255, 159, 67); }
                         }
 
-                        AddRoomCard(room.TenPhong, room.LoaiPhong, room.TongSoGhe, soldSeats, movieName, status, statusColor, start, end);
+                        AddRoomCard(room.MaPhong, room.TenPhong, room.LoaiPhong, room.TongSoGhe, soldSeats, movieName, status, statusColor, start, end);
                     }
                 }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi tải danh sách phòng: " + ex.Message);
-            }
+            catch { }
         }
 
-        private void AddRoomCard(string name, string type, int totalSeats, int soldSeats, string currentMovie, string status, Color statusColor, DateTime? startTime, DateTime? endTime)
+        private async Task LoadRoomGridAsync()
         {
-            Guna2GradientPanel card = new Guna2GradientPanel();
-            card.Size = new Size(270, 230);
-            card.FillColor = Color.White;
-            card.FillColor2 = Color.White;
-            card.BorderRadius = 15;
-            card.Margin = new Padding(15);
-            card.ShadowDecoration.Enabled = true;
-            card.ShadowDecoration.BorderRadius = 15;
-            card.ShadowDecoration.Depth = 5;
-            card.Cursor = Cursors.Hand;
+            try
+            {
+                using (var db = new DataContext())
+                {
+                    var data = await db.PhongChieus.Select(p => new
+                    {
+                        p.MaPhong,
+                        p.TenPhong,
+                        p.LoaiPhong,
+                        p.SoHang,
+                        p.SoCot,
+                        p.TongSoGhe,
+                        p.TrangThai,
+                        p.MoTaKyThuat
+                    }).ToListAsync();
+                    dgvRooms.DataSource = data;
+                    
+                    if (dgvRooms.Columns["MaPhong"] != null)
+                    {
+                        dgvRooms.Columns["MaPhong"].HeaderText = "ID";
+                        dgvRooms.Columns["MaPhong"].ReadOnly = true;
+                        dgvRooms.Columns["TenPhong"].HeaderText = "Tên phòng";
+                        dgvRooms.Columns["LoaiPhong"].HeaderText = "Loại";
+                        dgvRooms.Columns["SoHang"].HeaderText = "Hàng";
+                        dgvRooms.Columns["SoCot"].HeaderText = "Cột";
+                        dgvRooms.Columns["TongSoGhe"].HeaderText = "Tổng ghế";
+                        dgvRooms.Columns["TongSoGhe"].ReadOnly = true;
+                        dgvRooms.Columns["TrangThai"].HeaderText = "Trạng thái";
+                        dgvRooms.Columns["MoTaKyThuat"].HeaderText = "Ghi chú";
+                    }
+                }
+            }
+            catch { }
+        }
+
+        private void AddRoomCard(int maPhong, string name, string type, int totalSeats, int soldSeats, string currentMovie, string status, Color statusColor, DateTime? startTime, DateTime? endTime)
+        {
+            Guna2GradientPanel card = new Guna2GradientPanel { Size = new Size(270, 230), FillColor = Color.White, FillColor2 = Color.White, BorderRadius = 15, Margin = new Padding(15), Cursor = Cursors.Hand };
+            card.ShadowDecoration.Enabled = true; card.ShadowDecoration.BorderRadius = 15; card.ShadowDecoration.Depth = 5;
 
             Label lblName = new Label { Text = name, Font = new Font("Segoe UI", 13F, FontStyle.Bold), ForeColor = Color.FromArgb(64, 64, 64), Location = new Point(15, 12), AutoSize = true };
             Label lblType = new Label { Text = type, Font = new Font("Segoe UI", 8F, FontStyle.Bold), ForeColor = Color.White, BackColor = Color.FromArgb(94, 148, 255), Padding = new Padding(5, 2, 5, 2), Location = new Point(200, 15), AutoSize = true };
             Label lblMovieTitle = new Label { Text = "🎬 " + (currentMovie == "N/A" ? "(Trống)" : currentMovie), Font = new Font("Segoe UI", 10F, FontStyle.Bold), ForeColor = currentMovie == "N/A" ? Color.Silver : Color.FromArgb(94, 148, 255), Location = new Point(15, 45), Size = new Size(240, 25) };
 
-            string remainingText = "";
-            Color remainingColor = Color.FromArgb(255, 82, 82);
-
+            string remainingText = ""; Color remainingColor = Color.FromArgb(255, 82, 82);
             if (endTime.HasValue)
             {
                 TimeSpan remaining = endTime.Value - DateTime.Now;
-                if (remaining.TotalMinutes > 0 && startTime.Value <= DateTime.Now)
-                {
-                    remainingText = $"⏳ Còn {Math.Ceiling(remaining.TotalMinutes)}p";
-                }
-                else if (remaining.TotalMinutes <= 0 && startTime.Value <= DateTime.Now)
-                {
-                    remainingText = "✅ Hết phim";
-                    remainingColor = Color.FromArgb(0, 184, 152);
-                }
-                else if (startTime.Value > DateTime.Now)
-                {
-                    remainingText = $"🕒 {startTime.Value:HH:mm}";
-                    remainingColor = Color.FromArgb(255, 159, 67);
-                }
+                if (remaining.TotalMinutes > 0 && startTime.Value <= DateTime.Now) remainingText = $"⏳ Còn {Math.Ceiling(remaining.TotalMinutes)}p";
+                else if (remaining.TotalMinutes <= 0 && startTime.Value <= DateTime.Now) { remainingText = "✅ Hết phim"; remainingColor = Color.FromArgb(0, 184, 152); }
+                else if (startTime.Value > DateTime.Now) { remainingText = $"🕒 {startTime.Value:HH:mm}"; remainingColor = Color.FromArgb(255, 159, 67); }
             }
 
             Label lblRemaining = new Label { Text = remainingText, Font = new Font("Segoe UI", 9F, FontStyle.Bold), ForeColor = remainingColor, Location = new Point(150, 75), Size = new Size(110, 20), TextAlign = ContentAlignment.MiddleRight };
@@ -166,18 +167,49 @@ namespace WinRap.ViewLINQ
             Guna2ProgressBar pbOccupancy = new Guna2ProgressBar { Size = new Size(240, 10), Location = new Point(15, 105), BorderRadius = 5, Value = percentage, FillColor = Color.FromArgb(242, 245, 250), ProgressColor = percentage > 80 ? Color.FromArgb(255, 82, 82) : Color.FromArgb(94, 148, 255), ProgressColor2 = percentage > 80 ? Color.FromArgb(255, 82, 82) : Color.FromArgb(94, 148, 255) };
             Guna2CirclePictureBox dot = new Guna2CirclePictureBox { Size = new Size(8, 8), FillColor = statusColor, Location = new Point(18, 135) };
             Label lblStatus = new Label { Text = status, Font = new Font("Segoe UI", 8.5F, FontStyle.Italic), ForeColor = statusColor, Location = new Point(30, 132), AutoSize = true };
-            Guna2Button btnConfig = new Guna2Button { Text = "Xem chi tiết", Size = new Size(240, 35), Location = new Point(15, 175), BorderRadius = 8, FillColor = Color.FromArgb(242, 245, 250), ForeColor = Color.FromArgb(94, 148, 255), Font = new Font("Segoe UI", 9F, FontStyle.Bold) };
+            
+            Guna2Button btnView = new Guna2Button { Text = "Giám sát ghế", Size = new Size(240, 35), Location = new Point(15, 175), BorderRadius = 8, FillColor = Color.FromArgb(242, 245, 250), ForeColor = Color.FromArgb(94, 148, 255), Font = new Font("Segoe UI", 9F, FontStyle.Bold), Tag = maPhong };
+            btnView.Click += BtnView_Click;
 
-            card.Controls.Add(lblName);
-            card.Controls.Add(lblType);
-            card.Controls.Add(lblMovieTitle);
-            card.Controls.Add(lblRemaining);
-            card.Controls.Add(lblTicketInfo);
-            card.Controls.Add(pbOccupancy);
-            card.Controls.Add(dot);
-            card.Controls.Add(lblStatus);
-            card.Controls.Add(btnConfig);
+            card.Controls.Add(lblName); card.Controls.Add(lblType); card.Controls.Add(lblMovieTitle); card.Controls.Add(lblRemaining); card.Controls.Add(lblTicketInfo); card.Controls.Add(pbOccupancy); card.Controls.Add(dot); card.Controls.Add(lblStatus); card.Controls.Add(btnView);
             flpRooms.Controls.Add(card);
+        }
+
+        private void BtnView_Click(object sender, EventArgs e)
+        {
+            int maPhong = (int)((Guna2Button)sender).Tag;
+            frmRoomEdit frm = new frmRoomEdit(maPhong); 
+            frmMain.Instance.container(frm);
+        }
+
+        private async void btnSaveAll_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (var db = new DataContext())
+                {
+                    foreach (DataGridViewRow row in dgvRooms.Rows)
+                    {
+                        if (row.IsNewRow) continue;
+                        int id = (int)row.Cells["MaPhong"].Value;
+                        var room = await db.PhongChieus.FindAsync(id);
+                        if (room != null)
+                        {
+                            room.TenPhong = row.Cells["TenPhong"].Value?.ToString();
+                            room.LoaiPhong = row.Cells["LoaiPhong"].Value?.ToString();
+                            room.SoHang = Convert.ToInt32(row.Cells["SoHang"].Value);
+                            room.SoCot = Convert.ToInt32(row.Cells["SoCot"].Value);
+                            room.TongSoGhe = (room.SoHang ?? 0) * (room.SoCot ?? 0);
+                            room.TrangThai = row.Cells["TrangThai"].Value?.ToString();
+                            room.MoTaKyThuat = row.Cells["MoTaKyThuat"].Value?.ToString();
+                        }
+                    }
+                    await db.SaveChangesAsync();
+                    MessageBox.Show("Đã lưu toàn bộ cấu hình hệ thống!");
+                    await LoadDataAsync();
+                }
+            }
+            catch (Exception ex) { MessageBox.Show("Lỗi lưu dữ liệu: " + ex.Message); }
         }
     }
 }
