@@ -29,17 +29,9 @@ namespace WinRap.ViewLINQ
         private void btnTab_Click(object sender, EventArgs e)
         {
             Guna2Button btn = sender as Guna2Button;
-            if (btn == btnTabMonitor)
+            if (btn == btnTabConfig)
             {
-                pnlMonitor.Visible = true;
-                pnlConfig.Visible = false;
-                pnlMonitor.BringToFront();
-            }
-            else
-            {
-                pnlMonitor.Visible = false;
-                pnlConfig.Visible = true;
-                pnlConfig.BringToFront();
+                frmMain.Instance.container(new frmRoomConfig());
             }
         }
 
@@ -48,7 +40,7 @@ namespace WinRap.ViewLINQ
             this.SuspendLayout();
             try 
             {
-                await Task.WhenAll(LoadRoomCardsAsync(), LoadRoomGridAsync());
+                await LoadRoomCardsAsync();
             }
             finally 
             {
@@ -105,43 +97,6 @@ namespace WinRap.ViewLINQ
             catch { }
         }
 
-        private async Task LoadRoomGridAsync()
-        {
-            try
-            {
-                using (var db = new DataContext())
-                {
-                    var data = await db.PhongChieus.Select(p => new
-                    {
-                        p.MaPhong,
-                        p.TenPhong,
-                        p.LoaiPhong,
-                        p.SoHang,
-                        p.SoCot,
-                        p.TongSoGhe,
-                        p.TrangThai,
-                        p.MoTaKyThuat
-                    }).ToListAsync();
-                    dgvRooms.DataSource = data;
-                    
-                    if (dgvRooms.Columns["MaPhong"] != null)
-                    {
-                        dgvRooms.Columns["MaPhong"].HeaderText = "ID";
-                        dgvRooms.Columns["MaPhong"].ReadOnly = true;
-                        dgvRooms.Columns["TenPhong"].HeaderText = "Tên phòng";
-                        dgvRooms.Columns["LoaiPhong"].HeaderText = "Loại";
-                        dgvRooms.Columns["SoHang"].HeaderText = "Hàng";
-                        dgvRooms.Columns["SoCot"].HeaderText = "Cột";
-                        dgvRooms.Columns["TongSoGhe"].HeaderText = "Tổng ghế";
-                        dgvRooms.Columns["TongSoGhe"].ReadOnly = true;
-                        dgvRooms.Columns["TrangThai"].HeaderText = "Trạng thái";
-                        dgvRooms.Columns["MoTaKyThuat"].HeaderText = "Ghi chú";
-                    }
-                }
-            }
-            catch { }
-        }
-
         private void AddRoomCard(int maPhong, string name, string type, int totalSeats, int soldSeats, string currentMovie, string status, Color statusColor, DateTime? startTime, DateTime? endTime)
         {
             Guna2GradientPanel card = new Guna2GradientPanel { Size = new Size(270, 230), FillColor = Color.White, FillColor2 = Color.White, BorderRadius = 15, Margin = new Padding(15), Cursor = Cursors.Hand };
@@ -180,36 +135,6 @@ namespace WinRap.ViewLINQ
             int maPhong = (int)((Guna2Button)sender).Tag;
             frmRoomEdit frm = new frmRoomEdit(maPhong); 
             frmMain.Instance.container(frm);
-        }
-
-        private async void btnSaveAll_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                using (var db = new DataContext())
-                {
-                    foreach (DataGridViewRow row in dgvRooms.Rows)
-                    {
-                        if (row.IsNewRow) continue;
-                        int id = (int)row.Cells["MaPhong"].Value;
-                        var room = await db.PhongChieus.FindAsync(id);
-                        if (room != null)
-                        {
-                            room.TenPhong = row.Cells["TenPhong"].Value?.ToString();
-                            room.LoaiPhong = row.Cells["LoaiPhong"].Value?.ToString();
-                            room.SoHang = Convert.ToInt32(row.Cells["SoHang"].Value);
-                            room.SoCot = Convert.ToInt32(row.Cells["SoCot"].Value);
-                            room.TongSoGhe = (room.SoHang ?? 0) * (room.SoCot ?? 0);
-                            room.TrangThai = row.Cells["TrangThai"].Value?.ToString();
-                            room.MoTaKyThuat = row.Cells["MoTaKyThuat"].Value?.ToString();
-                        }
-                    }
-                    await db.SaveChangesAsync();
-                    MessageBox.Show("Đã lưu toàn bộ cấu hình hệ thống!");
-                    await LoadDataAsync();
-                }
-            }
-            catch (Exception ex) { MessageBox.Show("Lỗi lưu dữ liệu: " + ex.Message); }
         }
     }
 }

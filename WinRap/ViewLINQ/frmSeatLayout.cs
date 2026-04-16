@@ -29,6 +29,7 @@ namespace WinRap.ViewLINQ
             this.rows = rows;
             this.cols = cols;
             lblRoomInfo.Text = "PHÒNG: " + roomName + " - SƠ ĐỒ GHẾ";
+            pnlSeats.SizeChanged += (s, e) => GenerateSeats();
         }
 
         private void frmSeatLayout_Load(object sender, EventArgs e)
@@ -38,17 +39,23 @@ namespace WinRap.ViewLINQ
 
         private void GenerateSeats()
         {
+            if (rows <= 0 || cols <= 0 || pnlSeats.Width <= 0 || pnlSeats.Height <= 0) return;
+
             pnlSeats.Controls.Clear();
+            pnlSeats.Controls.Add(lblScreen); // Giữ lại nhãn màn hình
             
-            int seatWidth = 50;
-            int seatHeight = 50;
-            int margin = 10;
+            int seatWidth = 45;
+            int seatHeight = 45;
+            int margin = 8;
 
             // Tính toán để căn giữa sơ đồ ghế
-            int totalWidth = cols * (seatWidth + margin);
+            int totalWidth = cols * (seatWidth + margin) - margin;
             int startX = (pnlSeats.Width - totalWidth) / 2;
             if (startX < 20) startX = 20;
 
+            int startY = 70; // Bắt đầu dưới màn hình
+
+            pnlSeats.SuspendLayout();
             for (int i = 0; i < rows; i++)
             {
                 char rowChar = (char)('A' + i);
@@ -57,17 +64,18 @@ namespace WinRap.ViewLINQ
                     Guna2Button btnSeat = new Guna2Button();
                     btnSeat.Text = rowChar.ToString() + j.ToString();
                     btnSeat.Size = new Size(seatWidth, seatHeight);
-                    btnSeat.Location = new Point(startX + (j - 1) * (seatWidth + margin), i * (seatHeight + margin) + 50);
-                    btnSeat.BorderRadius = 5;
-                    btnSeat.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+                    btnSeat.Location = new Point(startX + (j - 1) * (seatWidth + margin), i * (seatHeight + margin) + startY);
+                    btnSeat.BorderRadius = 6;
+                    btnSeat.Font = new Font("Segoe UI", 8, FontStyle.Bold);
+                    btnSeat.Cursor = Cursors.Hand;
                     
                     // Giả lập một số ghế đã bán hoặc ghế VIP
-                    if ((i == 4 || i == 5) && (j > 3 && j < 10))
+                    if ((i >= rows / 3 && i <= rows * 2 / 3) && (j >= cols / 4 && j <= cols * 3 / 4))
                     {
                         btnSeat.FillColor = Color.FromArgb(155, 89, 182); // Ghế VIP (Tím)
                         btnSeat.Tag = "VIP";
                     }
-                    else if (i < 2 && j % 3 == 0)
+                    else if (i < 2 && j % 4 == 0)
                     {
                         btnSeat.FillColor = Color.FromArgb(255, 82, 82); // Ghế đã bán (Đỏ)
                         btnSeat.Enabled = false;
@@ -83,6 +91,7 @@ namespace WinRap.ViewLINQ
                     pnlSeats.Controls.Add(btnSeat);
                 }
             }
+            pnlSeats.ResumeLayout();
         }
 
         private void BtnSeat_Click(object sender, EventArgs e)

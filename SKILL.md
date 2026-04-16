@@ -53,5 +53,19 @@ Trong SQL Server, kiểu `time` không chấp nhận giá trị >= 24h.
 - **Nguyên lý:** Sử dụng một biến cờ `isAdding` và hàm `SwitchMode(bool isEditMode)`.
 - **Hoạt động:** Khi bấm "Thêm/Sửa", ẩn các nút chính và hiện nút "Lưu/Hủy". Vô hiệu hóa Grid (`Enabled = false`) để bảo vệ dữ liệu đang nhập.
 
+## 7. Cập nhật Real-time & Tối ưu hiệu năng UI
+
+Khi hiển thị sơ đồ ghế động (120-180 ghế), việc nạp lại dữ liệu liên tục có thể gây nháy màn hình.
+**Giải pháp:**
+- **Timer + Dictionary:** Sử dụng `System.Windows.Forms.Timer` để quét CSDL theo chu kỳ. Lưu danh sách Button vào `Dictionary<string, Guna2Button>` để cập nhật trạng thái trực tiếp mà không cần xóa đi vẽ lại (`Controls.Clear`).
+- **DoubleBuffered:** Kích hoạt `this.DoubleBuffered = true` cho Form để giảm thiểu hiện tượng giật lag khi render hàng loạt control.
+
+## 8. Quy tắc cho Visual Studio Designer (InitializeComponent)
+
+Trình phân tích mã (Parser) của Visual Studio Designer rất nhạy cảm với cú pháp.
+**Quy tắc bắt buộc:**
+- **Khai báo biến:** Mọi Control UI (Label, Panel, Button...) phải được khai báo làm biến thành viên (Class member), không khai báo cục bộ bên trong hàm.
+- **Khởi tạo:** Luôn dùng `this.control = new ...()` và thiết lập thuộc tính từng dòng riêng biệt. Tránh sử dụng cú pháp Object Initializer `{ Property = Value }` vì nó dễ gây lỗi `Failed to parse method 'InitializeComponent'`.
+
 ---
 *Ghi chú: Luôn cập nhật file này khi phát triển xong một logic phức tạp mới.*

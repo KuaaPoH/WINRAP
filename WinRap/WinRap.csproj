@@ -98,6 +98,12 @@
     <Compile Include="ViewLINQ\frmRoom.Designer.cs">
       <DependentUpon>frmRoom.cs</DependentUpon>
     </Compile>
+    <Compile Include="ViewLINQ\frmRoomConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\frmRoomConfig.Designer.cs">
+      <DependentUpon>frmRoomConfig.cs</DependentUpon>
+    </Compile>
     <Compile Include="ViewLINQ\frmRoomEdit.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -193,6 +199,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ViewLINQ\frmRoom.resx">
       <DependentUpon>frmRoom.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViewLINQ\frmRoomConfig.resx">
+      <DependentUpon>frmRoomConfig.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ViewLINQ\frmSeatLayout.resx">
       <DependentUpon>frmSeatLayout.cs</DependentUpon>

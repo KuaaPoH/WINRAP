@@ -19,19 +19,19 @@ Dự án xây dựng ứng dụng quản lý rạp chiếu phim bằng **C# Wind
 - [x] **frmTheLoai:** Quản lý thể loại phim với cơ chế async/await.
 - [x] **frmRoom:** Thiết kế hệ thống Tab giả (Panel switching) hiện đại, tích hợp nút điều hướng cạnh thanh tìm kiếm.
 - [x] **frmShowtime:** Lập lịch chiếu phim với cơ chế State Management (Hoàn thành).
-
 ### Giai đoạn 2: Kết nối dữ liệu & LINQ - Đang triển khai
 - [x] Cấu hình Entity Framework 6 và DataContext.
 - [x] Hoàn thiện CRUD cho Khách hàng, Nhân viên, Thể loại và Phim.
 - [x] **frmShowtime:** Cập nhật ComboBox chỉ hiển thị Phim "Đang chiếu" và Phòng "Sẵn sàng". Hoàn thiện kiểm tra trùng lịch (Overlap) cho suất chiếu.
-- [ ] **frmRoom (Đang nâng cấp):** 
-    - [x] **Tab Giám sát rạp:** Hoạt động tốt, hiển thị thông tin suất chiếu real-time, tỷ lệ vé đã bán và trạng thái phòng trực quan.
-    - [ ] **Sơ đồ chỗ ngồi (frmRoomEdit/Detail):** Đã thiết kế giao diện nhưng **chưa hoạt động ổn định** (lỗi hiển thị ghế khi nạp dữ liệu).
-    - [ ] **Tab Cấu hình hệ thống:** Đã có DataGridView để sửa nhanh nhưng **cần được cải thiện lại** về UX và logic đồng bộ dữ liệu.
+- [x] **Quản lý Phòng (Hoàn thành):**
+    - [x] **frmRoom:** Màn hình Giám sát rạp chuyên nghiệp, hiển thị trạng thái suất chiếu và tỷ lệ lấp đầy ghế real-time.
+    - [x] **frmRoomConfig (Mới):** Tách biệt chức năng cấu hình thông tin phòng (Tên, Loại, Trạng thái, Ghi chú) với giao diện nhập liệu thông minh.
+    - [x] **frmRoomEdit:** Sơ đồ ghế hoạt động ổn định, tích hợp cập nhật trạng thái đã bán real-time qua Timer và cơ chế click đổi loại ghế (Thường/VIP) đồng bộ trực tiếp với CSDL.
 - [ ] **frmTicket:** Lập trình logic Bán vé và Sơ đồ ghế động.
 - [ ] **Thống kê:** Lập trình báo cáo doanh thu.
 
-### Giai đoạn 3: Nghiệp vụ & Bảo mật
+---
+*Cập nhật ngày: 16/04/2026*
 - [ ] Lập trình in hóa đơn vé.
 - [ ] **frmLogin:** Hoàn thiện bảo mật hệ thống.
 
