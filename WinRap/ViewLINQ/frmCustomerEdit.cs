@@ -1,8 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinRap.Model;
 
@@ -10,29 +10,27 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmCustomerEdit : Form
     {
-        private int _id;
+        // Khai báo DataContext dùng chung
+        private DataContext db = new DataContext();
+        private int _maKH;
 
         public frmCustomerEdit(int id)
         {
             InitializeComponent();
-            _id = id;
+            _maKH = id;
         }
 
-        private async void frmCustomerEdit_Load(object sender, EventArgs e)
+        private void frmCustomerEdit_Load(object sender, EventArgs e)
         {
-            await LoadDataAsync();
+            LoadCustomerData();
         }
 
-        private async Task LoadDataAsync()
+        private void LoadCustomerData()
         {
             try
             {
-                var kh = await Task.Run(() => {
-                    using (var db = new DataContext())
-                    {
-                        return db.KhachHangs.Find(_id);
-                    }
-                });
+                // Tìm khách hàng bằng LINQ đồng bộ (Trang 9 PDF)
+                var kh = db.KhachHangs.SingleOrDefault(u => u.MaKhachHang == _maKH);
 
                 if (kh != null)
                 {
@@ -43,41 +41,36 @@ namespace WinRap.ViewLINQ
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi: " + ex.Message);
+                MessageBox.Show("Lỗi tải thông tin: " + ex.Message);
             }
         }
 
-        private async void btnLuu_Click(object sender, EventArgs e)
+        private void btnLuu_Click(object sender, EventArgs e)
         {
+            // Kiểm tra trống
             if (string.IsNullOrWhiteSpace(txtHoTen.Text))
             {
                 MessageBox.Show("Vui lòng nhập họ tên!");
+                txtHoTen.Focus();
                 return;
             }
 
-            string hoTen = txtHoTen.Text.Trim();
-            string sdt = txtSDT.Text.Trim();
-            string email = txtEmail.Text.Trim();
-
             try
             {
-                await Task.Run(() => {
-                    using (var db = new DataContext())
-                    {
-                        var kh = db.KhachHangs.Find(_id);
-                        if (kh != null)
-                        {
-                            kh.HoTen = hoTen;
-                            kh.SoDienThoai = sdt;
-                            kh.Email = email;
-                            db.SaveChanges();
-                        }
-                    }
-                });
+                // Cập nhật bằng LINQ đồng bộ (Trang 11 PDF)
+                var kh = db.KhachHangs.SingleOrDefault(u => u.MaKhachHang == _maKH);
+                if (kh != null)
+                {
+                    kh.HoTen = txtHoTen.Text.Trim();
+                    kh.SoDienThoai = txtSDT.Text.Trim();
+                    kh.Email = txtEmail.Text.Trim();
+                    
+                    db.SaveChanges();
 
-                MessageBox.Show("Cập nhật thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                    MessageBox.Show("Cập nhật thông tin khách hàng thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
             }
             catch (Exception ex)
             {
@@ -87,6 +80,7 @@ namespace WinRap.ViewLINQ
 
         private void btnHuy_Click(object sender, EventArgs e)
         {
+            this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
     }

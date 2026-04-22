@@ -6,7 +6,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinRap.Model;
 
@@ -14,6 +13,8 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmMovie : Form
     {
+        // Khai báo DataContext dùng chung cho Form
+        DataContext db = new DataContext();
         private List<object> originalList = new List<object>();
 
         public frmMovie()
@@ -21,55 +22,47 @@ namespace WinRap.ViewLINQ
             InitializeComponent();
         }
 
-        private async void frmMovie_Load(object sender, EventArgs e)
+        private void frmMovie_Load(object sender, EventArgs e)
         {
-            await LoadDataAsync();
-            await LoadGenresAsync();
+            LoadGridData();
+            LoadGenres();
         }
 
-        private async Task LoadGenresAsync()
+        private void LoadGenres()
         {
             try
             {
-                var genres = await Task.Run(() => {
-                    using (var context = new DataContext())
-                    {
-                        var list = context.TheLoais.ToList();
-                        var result = list.Select(g => new { g.MaTheLoai, g.TenTheLoai }).ToList();
-                        result.Insert(0, new { MaTheLoai = 0, TenTheLoai = "--- Tất cả thể loại ---" });
-                        return result;
-                    }
-                });
+                var list = db.TheLoais.ToList();
+                var result = list.Select(g => new { g.MaTheLoai, g.TenTheLoai }).ToList();
+                result.Insert(0, new { MaTheLoai = 0, TenTheLoai = "--- Tất cả thể loại ---" });
 
-                cboFilterGenre.DataSource = genres;
+                cboFilterGenre.DataSource = result;
                 cboFilterGenre.DisplayMember = "TenTheLoai";
                 cboFilterGenre.ValueMember = "MaTheLoai";
             }
             catch { }
         }
 
-        public async Task LoadDataAsync()
+        public void LoadGridData()
         {
             try
             {
-                var listPhim = await Task.Run(() => {
-                    using (var context = new DataContext())
-                    {
-                        return context.Phims.Select(p => new
-                        {
-                            p.MaPhim,
-                            p.TenPhim,
-                            TenTheLoai = p.TheLoai.TenTheLoai,
-                            p.ThoiLuong,
-                            p.DaoDien,
-                            p.DienVien,
-                            p.MoTa,
-                            p.HinhAnh,
-                            p.MaTheLoai,
-                            TrangThaiDisplay = p.TrangThai == true ? "Đang chiếu" : "Ngừng chiếu"
-                        }).ToList();
-                    }
-                });
+                // Lấy dữ liệu bằng LINQ đồng bộ
+                var listPhim = (from p in db.Phims
+                               join t in db.TheLoais on p.MaTheLoai equals t.MaTheLoai
+                               select new
+                               {
+                                   p.MaPhim,
+                                   p.TenPhim,
+                                   TenTheLoai = t.TenTheLoai,
+                                   p.ThoiLuong,
+                                   p.DaoDien,
+                                   p.DienVien,
+                                   p.MoTa,
+                                   p.HinhAnh,
+                                   p.MaTheLoai,
+                                   TrangThaiDisplay = p.TrangThai == true ? "Đang chiếu" : "Ngừng chiếu"
+                               }).ToList();
 
                 originalList = listPhim.Cast<object>().ToList();
                 dgvMovie.DataSource = listPhim;
@@ -97,10 +90,10 @@ namespace WinRap.ViewLINQ
         private void btnThem_Click(object sender, EventArgs e)
         {
             var frm = new frmMovieNew();
-            frm.FormClosed += async (s, args) => {
+            frm.FormClosed += (s, args) => {
                 if (frm.DialogResult == DialogResult.OK)
                 {
-                    await LoadDataAsync();
+                    LoadGridData();
                 }
             };
             ShowOverlay(frm);
@@ -116,16 +109,16 @@ namespace WinRap.ViewLINQ
 
             int maPhim = (int)dgvMovie.CurrentRow.Cells["MaPhim"].Value;
             var frm = new frmMovieEdit(maPhim);
-            frm.FormClosed += async (s, args) => {
+            frm.FormClosed += (s, args) => {
                 if (frm.DialogResult == DialogResult.OK)
                 {
-                    await LoadDataAsync();
+                    LoadGridData();
                 }
             };
             ShowOverlay(frm);
         }
 
-        private async void btnXoa_Click(object sender, EventArgs e)
+        private void btnXoa_Click(object sender, EventArgs e)
         {
             try
             {
@@ -137,21 +130,17 @@ namespace WinRap.ViewLINQ
 
                 int maPhim = (int)dgvMovie.CurrentRow.Cells["MaPhim"].Value;
 
-                if (MessageBox.Show("Bạn có chắc muốn xóa phim này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show("Bạn có chắc muốn xóa phim này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Stop) == DialogResult.Yes)
                 {
-                    await Task.Run(() => {
-                        using (var context = new DataContext())
-                        {
-                            var phim = context.Phims.Find(maPhim);
-                            if (phim != null)
-                            {
-                                context.Phims.Remove(phim);
-                                context.SaveChanges();
-                            }
-                        }
-                    });
-                    MessageBox.Show("Xóa phim thành công!");
-                    await LoadDataAsync();
+                    // Xóa bằng LINQ đồng bộ (Trang 9 PDF)
+                    var phim = db.Phims.SingleOrDefault(p => p.MaPhim == maPhim);
+                    if (phim != null)
+                    {
+                        db.Phims.Remove(phim);
+                        db.SaveChanges();
+                        MessageBox.Show("Xóa phim thành công!");
+                        LoadGridData();
+                    }
                 }
             }
             catch (Exception ex)
@@ -206,6 +195,12 @@ namespace WinRap.ViewLINQ
         private void cboFilterGenre_SelectedIndexChanged(object sender, EventArgs e)
         {
             FilterData();
+        }
+
+        private void btnLamMoi_Click(object sender, EventArgs e)
+        {
+            LoadGridData();
+            LoadGenres();
         }
     }
 }

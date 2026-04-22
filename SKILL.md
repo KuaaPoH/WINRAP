@@ -50,17 +50,39 @@ Trong SQL Server, kiểu `time` không chấp nhận giá trị >= 24h.
 ## 6. Quản lý trạng thái Giao diện (State Management)
 
 Để cải thiện trải nghiệm người dùng khi nhập liệu:
-- **Nguyên lý:** Sử dụng một biến cờ `isAdding` và hàm `SwitchMode(bool isEditMode)`.
-- **Hoạt động:** Khi bấm "Thêm/Sửa", ẩn các nút chính và hiện nút "Lưu/Hủy". Vô hiệu hóa Grid (`Enabled = false`) để bảo vệ dữ liệu đang nhập.
+- **Nguyên lý:** Sử dụng một biến cờ `AddNew` (để phân biệt đang Thêm hay Sửa) và hàm `setControl(bool isEdit)`.
+- **Hoạt động:** Khi bấm "Thêm" hoặc "Sửa", ẩn các nút chính (Thêm, Sửa, Xóa) và hiện nút "Lưu" và "Hủy/Không Lưu". Khóa hoặc mở TextBox tương ứng (`Enabled = isEdit`). Vô hiệu hóa Grid (`Enabled = !isEdit`) để bảo vệ dữ liệu đang nhập và tránh việc người dùng click nhầm dòng khác.
 
-## 7. Cập nhật Real-time & Tối ưu hiệu năng UI
+## 7. Tiêu chuẩn Thiết kế Form CRUD (Theo hướng dẫn PDF)
+
+Tất cả các form thao tác dữ liệu cơ bản (Thể loại, Lịch chiếu...) cần tuân thủ cấu trúc sau:
+
+**1. Thiết lập DataGridView (DGV):**
+- Trong sự kiện `Form_Load`, luôn gọi `dgv.AutoGenerateColumns = false;` và `dgv.AllowUserToAddRows = false;`.
+- Gán dữ liệu nguyên bản từ Entity Framework: `dgv.DataSource = db.Table.ToList();`.
+
+**2. Hiển thị dữ liệu lên TextBox (In-place Edit):**
+- Sử dụng sự kiện **`CellEnter`** của DGV.
+- Logic: `if (e.RowIndex >= 0) { txtTen.Text = dgv.Rows[e.RowIndex].Cells["TenCot"].Value?.ToString(); }`
+- Nhờ sự kiện này, khi người dùng click vào dòng nào, dữ liệu sẽ ngay lập tức được đổ lên các ô nhập liệu bên cạnh/bên dưới.
+
+**3. Lọc và Tìm kiếm (Filter):**
+- Không gọi lại DB khi tìm kiếm. Lưu kết quả từ `db.Table.ToList()` vào một `List<object> originalList` toàn cục.
+- Trong sự kiện `txtSearch_TextChanged`, thực hiện filter trực tiếp trên `originalList` (ví dụ dùng `Where` và reflection hoặc ép kiểu) sau đó gán lại `DataSource` cho DGV.
+
+**4. Dialog Edit (Dành cho form phức tạp như Khách hàng, Nhân viên):**
+- Đối với dữ liệu lớn, thay vì dùng `CellEnter`, ta mở form con dạng Dialog (Pop-up).
+- Form con nhận ID thông qua Hàm khởi tạo (Constructor): `public frmEdit(int id) { _id = id; }`.
+- Form con tự dùng LINQ `SingleOrDefault` để lấy dữ liệu chi tiết và lưu trực tiếp `SaveChanges()`.
+
+## 8. Cập nhật Real-time & Tối ưu hiệu năng UI
 
 Khi hiển thị sơ đồ ghế động (120-180 ghế), việc nạp lại dữ liệu liên tục có thể gây nháy màn hình.
 **Giải pháp:**
 - **Timer + Dictionary:** Sử dụng `System.Windows.Forms.Timer` để quét CSDL theo chu kỳ. Lưu danh sách Button vào `Dictionary<string, Guna2Button>` để cập nhật trạng thái trực tiếp mà không cần xóa đi vẽ lại (`Controls.Clear`).
 - **DoubleBuffered:** Kích hoạt `this.DoubleBuffered = true` cho Form để giảm thiểu hiện tượng giật lag khi render hàng loạt control.
 
-## 8. Quy tắc cho Visual Studio Designer (InitializeComponent)
+## 9. Quy tắc cho Visual Studio Designer (InitializeComponent)
 
 Trình phân tích mã (Parser) của Visual Studio Designer rất nhạy cảm với cú pháp.
 **Quy tắc bắt buộc:**

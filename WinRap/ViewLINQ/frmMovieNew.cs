@@ -4,7 +4,6 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinRap.Model;
 
@@ -12,6 +11,7 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmMovieNew : Form
     {
+        DataContext db = new DataContext();
         private string selectedImagePath = "";
 
         public frmMovieNew()
@@ -19,21 +19,16 @@ namespace WinRap.ViewLINQ
             InitializeComponent();
         }
 
-        private async void frmMovieNew_Load(object sender, EventArgs e)
+        private void frmMovieNew_Load(object sender, EventArgs e)
         {
-            await LoadTheLoaiAsync();
+            LoadTheLoai();
         }
 
-        private async Task LoadTheLoaiAsync()
+        private void LoadTheLoai()
         {
             try
             {
-                var listTheLoai = await Task.Run(() => {
-                    using (var context = new DataContext())
-                    {
-                        return context.TheLoais.Select(t => new { t.MaTheLoai, t.TenTheLoai }).ToList();
-                    }
-                });
+                var listTheLoai = db.TheLoais.Select(t => new { t.MaTheLoai, t.TenTheLoai }).ToList();
                 cboTheLoai.DataSource = listTheLoai;
                 cboTheLoai.DisplayMember = "TenTheLoai";
                 cboTheLoai.ValueMember = "MaTheLoai";
@@ -67,13 +62,15 @@ namespace WinRap.ViewLINQ
             }
         }
 
-        private async void btnLuu_Click(object sender, EventArgs e)
+        private void btnLuu_Click(object sender, EventArgs e)
         {
             try
             {
+                // Kiểm tra trống (Trang 11 PDF)
                 if (string.IsNullOrWhiteSpace(txtTenPhim.Text))
                 {
                     MessageBox.Show("Vui lòng nhập tên phim!");
+                    txtTenPhim.Focus();
                     return;
                 }
 
@@ -83,14 +80,7 @@ namespace WinRap.ViewLINQ
                     return;
                 }
 
-                // Lấy dữ liệu từ UI Thread trước khi vào Task.Run
-                string tenPhim = txtTenPhim.Text.Trim();
-                int maTheLoai = (int)cboTheLoai.SelectedValue;
-                string daoDien = txtDaoDien.Text.Trim();
-                string dienVien = txtDienVien.Text.Trim();
-                string moTa = txtMoTa.Text.Trim();
-                bool trangThai = swTrangThai.Checked;
-
+                // Xử lý ảnh đồng bộ
                 string fileName = "";
                 if (!string.IsNullOrEmpty(selectedImagePath))
                 {
@@ -100,25 +90,22 @@ namespace WinRap.ViewLINQ
                     File.Copy(selectedImagePath, Path.Combine(destPath, fileName), true);
                 }
 
-                await Task.Run(() => {
-                    using (var context = new DataContext())
-                    {
-                        tblPhim phim = new tblPhim
-                        {
-                            TenPhim = tenPhim,
-                            MaTheLoai = maTheLoai,
-                            ThoiLuong = thoiLuong,
-                            DaoDien = daoDien,
-                            DienVien = dienVien,
-                            MoTa = moTa,
-                            HinhAnh = fileName,
-                            NgayPhatHanh = DateTime.Now,
-                            TrangThai = trangThai
-                        };
-                        context.Phims.Add(phim);
-                        context.SaveChanges();
-                    }
-                });
+                // Thêm mới bằng LINQ đồng bộ (Trang 11 PDF)
+                tblPhim phim = new tblPhim
+                {
+                    TenPhim = txtTenPhim.Text.Trim(),
+                    MaTheLoai = (int)cboTheLoai.SelectedValue,
+                    ThoiLuong = thoiLuong,
+                    DaoDien = txtDaoDien.Text.Trim(),
+                    DienVien = txtDienVien.Text.Trim(),
+                    MoTa = txtMoTa.Text.Trim(),
+                    HinhAnh = fileName,
+                    NgayPhatHanh = DateTime.Now,
+                    TrangThai = swTrangThai.Checked
+                };
+
+                db.Phims.Add(phim);
+                db.SaveChanges();
 
                 MessageBox.Show("Thêm phim mới thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.DialogResult = DialogResult.OK;
@@ -139,7 +126,6 @@ namespace WinRap.ViewLINQ
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             base.OnFormClosed(e);
-            // Giải phóng Control khỏi Form cha khi đóng
             this.Parent?.Controls.Remove(this);
         }
     }

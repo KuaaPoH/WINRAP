@@ -22,6 +22,12 @@ Tài liệu này quy định các tiêu chuẩn bắt buộc khi phát triển d
     - **Orange (Chỉnh sửa):** `#FF9F43` (255, 159, 67)
     - **Green (Chi tiết/Thành công):** `#00B898`
     - **Gray (Hủy/Đóng):** `#6C757D` (108, 117, 125)
+- **Chuẩn hóa Giao diện Danh sách:**
+    - Loại bỏ tiêu đề lớn trên cùng, thay bằng thanh tìm kiếm (`txtSearch`) và nhãn tổng số (`lblTotalCount`).
+    - Nút chức năng (Thêm, Sửa, Xóa, Lưu, Hủy) đặt ở Panel dưới cùng căn lề phải.
+- **Data Binding (Hiển thị dữ liệu):**
+    - **BẮT BUỘC** tắt tự động tạo cột: `dgv.AutoGenerateColumns = false;`.
+    - Sử dụng `[NotMapped]` trong Class Model (Entity) để tạo các thuộc tính hiển thị (Ví dụ: `TrangThaiDisplay`) thay vì dùng truy vấn `Select` ẩn danh phức tạp trên UI.
 
 ## 3. Quy tắc mã nguồn (Coding Rules)
 

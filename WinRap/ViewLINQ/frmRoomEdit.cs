@@ -87,16 +87,21 @@ namespace WinRap.ViewLINQ
 
                         // Tìm suất chiếu đang diễn ra hoặc sắp diễn ra gần nhất
                         DateTime now = DateTime.Now;
-                        var showtime = await db.SuatChieus
-                            .Include(s => s.Phim)
-                            .Where(s => s.MaPhong == _maPhong && s.NgayChieu == now.Date && s.GioKetThuc > now.TimeOfDay)
-                            .OrderBy(s => s.GioBatDau)
-                            .FirstOrDefaultAsync();
+                        var showtimeData = await (from s in db.SuatChieus
+                                                 join p in db.Phims on s.MaPhim equals p.MaPhim
+                                                 where s.MaPhong == _maPhong && s.NgayChieu == now.Date && s.GioKetThuc > now.TimeOfDay
+                                                 orderby s.GioBatDau
+                                                 select new {
+                                                     s.MaSuatChieu,
+                                                     p.TenPhim,
+                                                     s.GioBatDau,
+                                                     s.GioKetThuc
+                                                 }).FirstOrDefaultAsync();
 
-                        if (showtime != null)
+                        if (showtimeData != null)
                         {
-                            _maSuatChieuHienTai = showtime.MaSuatChieu;
-                            lblScreenText.Text = $"PHIM: {showtime.Phim.TenPhim.ToUpper()} ({showtime.GioBatDau:hh\\:mm} - {showtime.GioKetThuc:hh\\:mm})";
+                            _maSuatChieuHienTai = showtimeData.MaSuatChieu;
+                            lblScreenText.Text = $"PHIM: {showtimeData.TenPhim.ToUpper()} ({showtimeData.GioBatDau:hh\\:mm} - {showtimeData.GioKetThuc:hh\\:mm})";
                         }
                         else
                         {
@@ -221,10 +226,10 @@ namespace WinRap.ViewLINQ
                 using (var db = new DataContext())
                 {
                     // Lấy danh sách mã ghế đã bán của suất chiếu hiện tại
-                    var soldSeats = await db.Ves
-                        .Where(v => v.MaSuatChieu == _maSuatChieuHienTai && v.TrangThai != "Đã hủy")
-                        .Select(v => v.Ghe.TenGhe)
-                        .ToListAsync();
+                    var soldSeats = await (from v in db.Ves
+                                          join g in db.Ghes on v.MaGhe equals g.MaGhe
+                                          where v.MaSuatChieu == _maSuatChieuHienTai && v.TrangThai != "Đã hủy"
+                                          select g.TenGhe).ToListAsync();
 
                     foreach (var entry in _seatButtons)
                     {

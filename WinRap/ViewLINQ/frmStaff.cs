@@ -5,7 +5,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinRap.Model;
 
@@ -13,60 +12,54 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmStaff : Form
     {
+        // Khai báo DataContext dùng chung cho Form
         private DataContext db = new DataContext();
-        private List<object> originalList = new List<object>();
 
         public frmStaff()
         {
             InitializeComponent();
-            LoadData();
         }
 
-        private void LoadData()
+        private void frmStaff_Load(object sender, EventArgs e)
+        {
+            dgvStaff.AutoGenerateColumns = false;
+            dgvStaff.AllowUserToAddRows = false;
+            LoadGridData();
+        }
+
+        private void LoadGridData()
         {
             try
             {
-                db = new DataContext(); // Refresh context
-                var list = db.NguoiDungs.Select(p => new
-                {
-                    p.MaNguoiDung,
-                    p.HoTen,
-                    p.Quyen,
-                    p.SoDienThoai,
-                    p.TenDangNhap,
-                    TrangThaiDisplay = p.TrangThai == true ? "Hoạt động" : "Khóa"
-                }).ToList();
+                // Làm mới context
+                db = new DataContext();
+                
+                string keyword = txtSearch.Text.Trim().ToLower();
+                int filterIndex = cboFilterRole.SelectedIndex;
 
-                originalList = list.Cast<object>().ToList();
-                FilterData();
+                // Lấy dữ liệu
+                var query = from p in db.NguoiDungs select p;
+
+                // Lọc theo từ khóa
+                if (!string.IsNullOrEmpty(keyword))
+                {
+                    query = query.Where(p => p.HoTen.ToLower().Contains(keyword) || p.TenDangNhap.ToLower().Contains(keyword));
+                }
+
+                // Lọc theo chức vụ
+                if (filterIndex == 1) 
+                    query = query.Where(p => p.Quyen == "Quản trị viên");
+                else if (filterIndex == 2) 
+                    query = query.Where(p => p.Quyen == "Nhân viên");
+
+                var result = query.ToList();
+                dgvStaff.DataSource = result;
+                lblTotalCount.Text = $"Tổng: {result.Count:00} nhân viên";
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Lỗi tải dữ liệu: " + ex.Message);
             }
-        }
-
-        private void FilterData()
-        {
-            string keyword = txtSearch.Text.Trim().ToLower();
-            int filterIndex = cboFilterRole.SelectedIndex;
-
-            var query = originalList.Where(p => {
-                var type = p.GetType();
-                string hoTen = type.GetProperty("HoTen")?.GetValue(p)?.ToString().ToLower() ?? "";
-                string tenDN = type.GetProperty("TenDangNhap")?.GetValue(p)?.ToString().ToLower() ?? "";
-                string quyen = type.GetProperty("Quyen")?.GetValue(p)?.ToString() ?? "";
-
-                bool matchKeyword = string.IsNullOrEmpty(keyword) || hoTen.Contains(keyword) || tenDN.Contains(keyword);
-                bool matchRole = true;
-                if (filterIndex == 1) matchRole = quyen == "Quản trị viên";
-                else if (filterIndex == 2) matchRole = quyen == "Nhân viên";
-
-                return matchKeyword && matchRole;
-            }).ToList();
-
-            dgvStaff.DataSource = query;
-            lblTotalCount.Text = $"Tổng: {query.Count:00} nhân viên";
         }
 
         private void btnThem_Click(object sender, EventArgs e)
@@ -75,7 +68,7 @@ namespace WinRap.ViewLINQ
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    LoadData();
+                    LoadGridData();
                 }
             }
         }
@@ -93,7 +86,7 @@ namespace WinRap.ViewLINQ
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    LoadData();
+                    LoadGridData();
                 }
             }
         }
@@ -106,19 +99,19 @@ namespace WinRap.ViewLINQ
                 return;
             }
 
-            if (MessageBox.Show("Bạn có chắc chắn muốn xóa nhân viên này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show("Bạn có chắc chắn muốn xóa nhân viên này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Stop) == DialogResult.Yes)
             {
                 try
                 {
                     int id = (int)dgvStaff.CurrentRow.Cells["MaNguoiDung"].Value;
-                    tblNguoiDung nv = db.NguoiDungs.Find(id);
+                    var nv = db.NguoiDungs.SingleOrDefault(u => u.MaNguoiDung == id);
 
                     if (nv != null)
                     {
                         db.NguoiDungs.Remove(nv);
                         db.SaveChanges();
-                        LoadData();
                         MessageBox.Show("Xóa nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadGridData();
                     }
                 }
                 catch (Exception ex)
@@ -130,12 +123,19 @@ namespace WinRap.ViewLINQ
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
-            FilterData();
+            LoadGridData();
         }
 
         private void cboFilterRole_SelectedIndexChanged(object sender, EventArgs e)
         {
-            FilterData();
+            LoadGridData();
+        }
+
+        private void btnLamMoi_Click(object sender, EventArgs e)
+        {
+            txtSearch.Clear();
+            cboFilterRole.SelectedIndex = 0;
+            LoadGridData();
         }
     }
 }

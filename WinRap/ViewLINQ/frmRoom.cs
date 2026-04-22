@@ -62,13 +62,13 @@ namespace WinRap.ViewLINQ
 
                 using (var db = new DataContext())
                 {
-                    var rooms = await db.PhongChieus.Include(p => p.SuatChieus).ToListAsync();
+                    var rooms = await db.PhongChieus.ToListAsync();
 
                     foreach (var room in rooms)
                     {
-                        var currentShow = room.SuatChieus
-                            .Where(s => s.NgayChieu == now.Date && s.GioKetThuc > now.TimeOfDay)
-                            .OrderBy(s => s.GioBatDau).FirstOrDefault();
+                        var currentShow = await db.SuatChieus
+                            .Where(s => s.MaPhong == room.MaPhong && s.NgayChieu == now.Date && s.GioKetThuc > now.TimeOfDay)
+                            .OrderBy(s => s.GioBatDau).FirstOrDefaultAsync();
 
                         string movieName = "N/A";
                         string status = room.TrangThai ?? "Sẵn sàng";

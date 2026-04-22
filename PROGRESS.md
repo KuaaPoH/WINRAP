@@ -22,6 +22,8 @@ Dự án xây dựng ứng dụng quản lý rạp chiếu phim bằng **C# Wind
 ### Giai đoạn 2: Kết nối dữ liệu & LINQ - Đang triển khai
 - [x] Cấu hình Entity Framework 6 và DataContext.
 - [x] Hoàn thiện CRUD cho Khách hàng, Nhân viên, Thể loại và Phim.
+    - [x] Sửa lỗi hiển thị dữ liệu `frmStaff`, `frmCustomer` (AutoGenerateColumns, sự kiện Load).
+    - [x] Cải tiến `frmTheLoai` theo chuẩn "In-place Edit" với thanh tìm kiếm và hiển thị tổng số.
 - [x] **frmShowtime:** Cập nhật ComboBox chỉ hiển thị Phim "Đang chiếu" và Phòng "Sẵn sàng". Hoàn thiện kiểm tra trùng lịch (Overlap) cho suất chiếu.
 - [x] **Quản lý Phòng (Hoàn thành):**
     - [x] **frmRoom:** Màn hình Giám sát rạp chuyên nghiệp, hiển thị trạng thái suất chiếu và tỷ lệ lấp đầy ghế real-time.

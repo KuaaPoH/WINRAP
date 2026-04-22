@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -28,13 +27,5 @@ namespace WinRap.Model
         public decimal GiaVeCoBan { get; set; }
 
         public bool? TrangThai { get; set; }
-
-        [ForeignKey("MaPhim")]
-        public virtual tblPhim Phim { get; set; }
-
-        [ForeignKey("MaPhong")]
-        public virtual tblPhongChieu PhongChieu { get; set; }
-
-        public virtual ICollection<tblVe> Ves { get; set; }
     }
 }

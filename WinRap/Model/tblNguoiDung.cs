@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,11 +7,6 @@ namespace WinRap.Model
     [Table("tblNguoiDung")]
     public class tblNguoiDung
     {
-        public tblNguoiDung()
-        {
-            Ves = new HashSet<tblVe>();
-        }
-
         [Key]
         public int MaNguoiDung { get; set; }
 
@@ -36,6 +30,10 @@ namespace WinRap.Model
 
         public bool? TrangThai { get; set; }
 
-        public virtual ICollection<tblVe> Ves { get; set; }
+        [NotMapped]
+        public string TrangThaiDisplay
+        {
+            get { return TrangThai == true ? "Hoạt động" : "Khóa"; }
+        }
     }
 }

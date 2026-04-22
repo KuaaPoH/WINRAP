@@ -4,7 +4,6 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinRap.Model;
 
@@ -12,6 +11,7 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmMovieEdit : Form
     {
+        DataContext db = new DataContext();
         private int _maPhim;
         private string selectedImagePath = "";
         private string currentImageName = "";
@@ -22,22 +22,17 @@ namespace WinRap.ViewLINQ
             _maPhim = maPhim;
         }
 
-        private async void frmMovieEdit_Load(object sender, EventArgs e)
+        private void frmMovieEdit_Load(object sender, EventArgs e)
         {
-            await LoadTheLoaiAsync();
-            await LoadMovieDataAsync();
+            LoadTheLoai();
+            LoadMovieData();
         }
 
-        private async Task LoadTheLoaiAsync()
+        private void LoadTheLoai()
         {
             try
             {
-                var listTheLoai = await Task.Run(() => {
-                    using (var context = new DataContext())
-                    {
-                        return context.TheLoais.Select(t => new { t.MaTheLoai, t.TenTheLoai }).ToList();
-                    }
-                });
+                var listTheLoai = db.TheLoais.Select(t => new { t.MaTheLoai, t.TenTheLoai }).ToList();
                 cboTheLoai.DataSource = listTheLoai;
                 cboTheLoai.DisplayMember = "TenTheLoai";
                 cboTheLoai.ValueMember = "MaTheLoai";
@@ -48,16 +43,12 @@ namespace WinRap.ViewLINQ
             }
         }
 
-        private async Task LoadMovieDataAsync()
+        private void LoadMovieData()
         {
             try
             {
-                var phim = await Task.Run(() => {
-                    using (var context = new DataContext())
-                    {
-                        return context.Phims.Find(_maPhim);
-                    }
-                });
+                // Tìm phim đồng bộ (Trang 9 PDF)
+                var phim = db.Phims.SingleOrDefault(p => p.MaPhim == _maPhim);
 
                 if (phim != null)
                 {
@@ -112,13 +103,14 @@ namespace WinRap.ViewLINQ
             }
         }
 
-        private async void btnLuu_Click(object sender, EventArgs e)
+        private void btnLuu_Click(object sender, EventArgs e)
         {
             try
             {
                 if (string.IsNullOrWhiteSpace(txtTenPhim.Text))
                 {
                     MessageBox.Show("Vui lòng nhập tên phim!");
+                    txtTenPhim.Focus();
                     return;
                 }
 
@@ -128,14 +120,7 @@ namespace WinRap.ViewLINQ
                     return;
                 }
 
-                // Lấy dữ liệu từ UI Thread trước khi vào Task.Run
-                string tenPhim = txtTenPhim.Text.Trim();
-                int maTheLoai = (int)cboTheLoai.SelectedValue;
-                string daoDien = txtDaoDien.Text.Trim();
-                string dienVien = txtDienVien.Text.Trim();
-                string moTa = txtMoTa.Text.Trim();
-                bool trangThai = swTrangThai.Checked;
-
+                // Xử lý ảnh
                 string fileName = currentImageName;
                 if (!string.IsNullOrEmpty(selectedImagePath))
                 {
@@ -145,24 +130,21 @@ namespace WinRap.ViewLINQ
                     File.Copy(selectedImagePath, Path.Combine(destPath, fileName), true);
                 }
 
-                await Task.Run(() => {
-                    using (var context = new DataContext())
-                    {
-                        var phim = context.Phims.Find(_maPhim);
-                        if (phim != null)
-                        {
-                            phim.TenPhim = tenPhim;
-                            phim.MaTheLoai = maTheLoai;
-                            phim.ThoiLuong = thoiLuong;
-                            phim.DaoDien = daoDien;
-                            phim.DienVien = dienVien;
-                            phim.MoTa = moTa;
-                            phim.HinhAnh = fileName;
-                            phim.TrangThai = trangThai;
-                            context.SaveChanges();
-                        }
-                    }
-                });
+                // Cập nhật bằng LINQ đồng bộ (Trang 11 PDF)
+                var phim = db.Phims.SingleOrDefault(p => p.MaPhim == _maPhim);
+                if (phim != null)
+                {
+                    phim.TenPhim = txtTenPhim.Text.Trim();
+                    phim.MaTheLoai = (int)cboTheLoai.SelectedValue;
+                    phim.ThoiLuong = thoiLuong;
+                    phim.DaoDien = txtDaoDien.Text.Trim();
+                    phim.DienVien = txtDienVien.Text.Trim();
+                    phim.MoTa = txtMoTa.Text.Trim();
+                    phim.HinhAnh = fileName;
+                    phim.TrangThai = swTrangThai.Checked;
+                    
+                    db.SaveChanges();
+                }
 
                 MessageBox.Show("Cập nhật phim thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.DialogResult = DialogResult.OK;
@@ -176,6 +158,7 @@ namespace WinRap.ViewLINQ
 
         private void btnHuy_Click(object sender, EventArgs e)
         {
+            this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
 

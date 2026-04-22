@@ -181,7 +181,7 @@ namespace WinRap.ViewLINQ
             this.dgvCustomer.AllowUserToResizeRows = false;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
             this.dgvCustomer.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            this.dgvCustomer.AutoGenerateColumns = false;
+            this.dgvCustomer.AutoGenerateColumns = true;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(245)))), ((int)(((byte)(250)))));
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
@@ -232,7 +232,6 @@ namespace WinRap.ViewLINQ
             this.dgvCustomer.ThemeStyle.RowsStyle.Height = 35;
             this.dgvCustomer.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(229)))), ((int)(((byte)(255)))));
             this.dgvCustomer.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(69)))), ((int)(((byte)(94)))));
-            this.dgvCustomer.CellEnter += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvCustomer_CellEnter);
             // 
             // MaKhachHang
             // 
@@ -291,6 +290,7 @@ namespace WinRap.ViewLINQ
             this.pnlSearch.PerformLayout();
             this.pnlMainContent.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvCustomer)).EndInit();
+            this.Load += new System.EventHandler(this.frmCustomer_Load);
             this.ResumeLayout(false);
 
         }

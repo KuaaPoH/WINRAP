@@ -5,7 +5,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinRap.Model;
 using System.Data.Entity;
@@ -14,44 +13,35 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmShowtime : Form
     {
-        private bool isAdding = false;
+        // 1. Khai báo biến toàn cục theo phong cách PDF
+        DataContext db = new DataContext();
+        bool AddNew = false;
 
         public frmShowtime()
         {
             InitializeComponent();
         }
 
-        private async void frmShowtime_Load(object sender, EventArgs e)
+        private void frmShowtime_Load(object sender, EventArgs e)
         {
-            await LoadDataAsync();
-            await LoadComboboxAsync();
+            LoadGridData();
+            LoadCombobox();
             SwitchMode(false);
         }
 
-        private async Task LoadComboboxAsync()
+        private void LoadCombobox()
         {
             try
             {
-                using (var db = new DataContext())
-                {
-                    var phims = await db.Phims.Where(p => p.TrangThai == true).ToListAsync();
-                    if (phims.Count > 0)
-                    {
-                        cboMovie.DataSource = null;
-                        cboMovie.DisplayMember = "TenPhim";
-                        cboMovie.ValueMember = "MaPhim";
-                        cboMovie.DataSource = phims;
-                    }
+                var phims = db.Phims.Where(p => p.TrangThai == true).ToList();
+                cboMovie.DataSource = phims;
+                cboMovie.DisplayMember = "TenPhim";
+                cboMovie.ValueMember = "MaPhim";
 
-                    var phongs = await db.PhongChieus.Where(p => p.TrangThai == "Sẵn sàng").ToListAsync();
-                    if (phongs.Count > 0)
-                    {
-                        cboRoom.DataSource = null;
-                        cboRoom.DisplayMember = "TenPhong";
-                        cboRoom.ValueMember = "MaPhong";
-                        cboRoom.DataSource = phongs;
-                    }
-                }
+                var phongs = db.PhongChieus.Where(p => p.TrangThai == "Sẵn sàng").ToList();
+                cboRoom.DataSource = phongs;
+                cboRoom.DisplayMember = "TenPhong";
+                cboRoom.ValueMember = "MaPhong";
             }
             catch (Exception ex)
             {
@@ -59,30 +49,27 @@ namespace WinRap.ViewLINQ
             }
         }
 
-        private async Task LoadDataAsync()
+        private void LoadGridData()
         {
             try
             {
-                using (var db = new DataContext())
-                {
-                    var data = await db.SuatChieus
-                        .Include(s => s.Phim)
-                        .Include(s => s.PhongChieu)
-                        .OrderByDescending(s => s.NgayChieu)
-                        .ThenBy(s => s.GioBatDau)
-                        .Select(s => new
-                        {
-                            s.MaSuatChieu,
-                            TenPhim = s.Phim.TenPhim,
-                            TenPhong = s.PhongChieu.TenPhong,
-                            s.NgayChieu,
-                            s.GioBatDau,
-                            GiaVe = s.GiaVeCoBan
-                        })
-                        .ToListAsync();
+                // Lấy dữ liệu bằng LINQ theo phong cách PDF
+                var data = (from s in db.SuatChieus
+                           join p in db.Phims on s.MaPhim equals p.MaPhim
+                           join r in db.PhongChieus on s.MaPhong equals r.MaPhong
+                           select new
+                           {
+                               s.MaSuatChieu,
+                               TenPhim = p.TenPhim,
+                               TenPhong = r.TenPhong,
+                               s.NgayChieu,
+                               s.GioBatDau,
+                               GiaVe = s.GiaVeCoBan
+                           })
+                           .OrderByDescending(x => x.NgayChieu)
+                           .ToList();
 
-                    dgvShowtime.DataSource = data;
-                }
+                dgvShowtime.DataSource = data;
             }
             catch (Exception ex)
             {
@@ -90,6 +77,7 @@ namespace WinRap.ViewLINQ
             }
         }
 
+        // Giữ nguyên hàm SwitchMode theo yêu cầu
         private void SwitchMode(bool isEditMode)
         {
             btnThem.Visible = !isEditMode;
@@ -101,6 +89,13 @@ namespace WinRap.ViewLINQ
             btnQuayLai.Visible = isEditMode;
 
             dgvShowtime.Enabled = !isEditMode;
+            
+            // Enabled/Disabled các input để tránh sửa nhầm khi không ở chế độ Edit
+            cboMovie.Enabled = isEditMode;
+            cboRoom.Enabled = isEditMode;
+            dtpDate.Enabled = isEditMode;
+            txtStartTime.ReadOnly = !isEditMode;
+            txtPrice.ReadOnly = !isEditMode;
         }
 
         private void ResetInputs()
@@ -112,10 +107,10 @@ namespace WinRap.ViewLINQ
             txtPrice.Text = "0";
         }
 
-        private async void btnLamMoi_Click(object sender, EventArgs e)
+        private void btnLamMoi_Click(object sender, EventArgs e)
         {
-            await LoadDataAsync();
-            await LoadComboboxAsync();
+            LoadGridData();
+            LoadCombobox();
         }
 
         private void dgvShowtime_CellEnter(object sender, DataGridViewCellEventArgs e)
@@ -127,17 +122,15 @@ namespace WinRap.ViewLINQ
                     DataGridViewRow row = dgvShowtime.Rows[e.RowIndex];
                     int maSC = Convert.ToInt32(row.Cells["MaSuatChieu"].Value);
 
-                    using (var db = new DataContext())
+                    // Tìm đối tượng trong DB theo ID (Phong cách PDF trang 9)
+                    var sc = db.SuatChieus.SingleOrDefault(u => u.MaSuatChieu == maSC);
+                    if (sc != null)
                     {
-                        var sc = db.SuatChieus.Find(maSC);
-                        if (sc != null)
-                        {
-                            cboMovie.SelectedValue = sc.MaPhim;
-                            cboRoom.SelectedValue = sc.MaPhong;
-                            dtpDate.Value = sc.NgayChieu;
-                            txtStartTime.Text = sc.GioBatDau.ToString(@"hh\:mm");
-                            txtPrice.Text = string.Format("{0:N0}", sc.GiaVeCoBan);
-                        }
+                        cboMovie.SelectedValue = sc.MaPhim;
+                        cboRoom.SelectedValue = sc.MaPhong;
+                        dtpDate.Value = sc.NgayChieu;
+                        txtStartTime.Text = sc.GioBatDau.ToString(@"hh\:mm");
+                        txtPrice.Text = string.Format("{0:N0}", sc.GiaVeCoBan);
                     }
                 }
                 catch { }
@@ -146,7 +139,7 @@ namespace WinRap.ViewLINQ
 
         private void btnThem_Click(object sender, EventArgs e)
         {
-            isAdding = true;
+            AddNew = true;
             ResetInputs();
             SwitchMode(true);
             txtStartTime.Focus();
@@ -154,12 +147,12 @@ namespace WinRap.ViewLINQ
 
         private void btnSua_Click(object sender, EventArgs e)
         {
-            if (dgvShowtime.SelectedRows.Count == 0)
+            if (dgvShowtime.CurrentRow == null)
             {
                 MessageBox.Show("Vui lòng chọn suất chiếu cần sửa!");
                 return;
             }
-            isAdding = false;
+            AddNew = false;
             SwitchMode(true);
             txtStartTime.Focus();
         }
@@ -173,11 +166,13 @@ namespace WinRap.ViewLINQ
             }
         }
 
-        private async void btnLuu_Click(object sender, EventArgs e)
+        private void btnLuu_Click(object sender, EventArgs e)
         {
-            if (cboMovie.SelectedValue == null || cboRoom.SelectedValue == null || string.IsNullOrEmpty(txtStartTime.Text))
+            // Kiểm tra trống (Trang 11 PDF)
+            if (string.IsNullOrEmpty(txtStartTime.Text))
             {
-                MessageBox.Show("Vui lòng nhập đầy đủ thông tin!");
+                MessageBox.Show("Vui lòng nhập giờ bắt đầu!");
+                txtStartTime.Focus();
                 return;
             }
 
@@ -190,75 +185,68 @@ namespace WinRap.ViewLINQ
             try
             {
                 string priceText = txtPrice.Text.Replace(".", "").Replace(",", "").Replace(" ", "");
-                if (!decimal.TryParse(priceText, out decimal giaVe))
+                decimal giaVe = decimal.Parse(priceText);
+
+                int maPhim = (int)cboMovie.SelectedValue;
+                int maPhong = (int)cboRoom.SelectedValue;
+                DateTime ngayChieu = dtpDate.Value.Date;
+
+                // 1. Tính toán giờ kết thúc (Logic nghiệp vụ giữ lại)
+                var phim = db.Phims.Find(maPhim);
+                TimeSpan duration = TimeSpan.FromMinutes(phim.ThoiLuong + 15);
+                TimeSpan gioKetThuc = gioBatDau.Add(duration);
+                if (gioKetThuc.Days > 0) gioKetThuc = new TimeSpan(gioKetThuc.Hours, gioKetThuc.Minutes, gioKetThuc.Seconds);
+
+                // 2. Kiểm tra va chạm lịch chiếu (Logic nghiệp vụ giữ lại)
+                int currentMaSC = AddNew ? -1 : (int)dgvShowtime.CurrentRow.Cells["MaSuatChieu"].Value;
+                var suatChieus = db.SuatChieus
+                    .Where(s => s.MaPhong == maPhong && s.NgayChieu == ngayChieu && s.MaSuatChieu != currentMaSC)
+                    .ToList();
+
+                bool biTrung = false;
+                DateTime dtStartNew = ngayChieu.Add(gioBatDau);
+                DateTime dtEndNew = ngayChieu.Add(gioBatDau.Add(duration));
+
+                foreach (var s in suatChieus)
                 {
-                    MessageBox.Show("Giá vé không hợp lệ!");
+                    DateTime dtStartOld = s.NgayChieu.Add(s.GioBatDau);
+                    TimeSpan durationOld = s.GioKetThuc >= s.GioBatDau 
+                        ? s.GioKetThuc.Value - s.GioBatDau 
+                        : s.GioKetThuc.Value.Add(TimeSpan.FromDays(1)) - s.GioBatDau;
+                    DateTime dtEndOld = dtStartOld.Add(durationOld);
+
+                    if (dtStartNew < dtEndOld && dtStartOld < dtEndNew)
+                    {
+                        biTrung = true;
+                        break;
+                    }
+                }
+
+                if (biTrung)
+                {
+                    MessageBox.Show("Phòng này đã có lịch chiếu khác chồng chéo thời gian!");
                     return;
                 }
 
-                using (var db = new DataContext())
+                // 3. Thực hiện lưu dữ liệu (Phong cách PDF trang 11)
+                if (AddNew)
                 {
-                    int maPhim = (int)cboMovie.SelectedValue;
-                    int maPhong = (int)cboRoom.SelectedValue;
-                    DateTime ngayChieu = dtpDate.Value.Date;
+                    tblSuatChieu sc = new tblSuatChieu();
+                    sc.MaPhim = maPhim;
+                    sc.MaPhong = maPhong;
+                    sc.NgayChieu = ngayChieu;
+                    sc.GioBatDau = gioBatDau;
+                    sc.GioKetThuc = gioKetThuc;
+                    sc.GiaVeCoBan = giaVe;
+                    sc.TrangThai = true;
 
-                    var phim = await db.Phims.FindAsync(maPhim);
-                    if (phim == null) return;
-                    
-                    TimeSpan duration = TimeSpan.FromMinutes(phim.ThoiLuong + 15);
-                    TimeSpan gioKetThucRaw = gioBatDau.Add(duration);
-                    TimeSpan gioKetThuc = gioKetThucRaw.Days > 0 
-                        ? new TimeSpan(gioKetThucRaw.Hours, gioKetThucRaw.Minutes, gioKetThucRaw.Seconds)
-                        : gioKetThucRaw;
-
-                    int currentMaSC = isAdding ? -1 : (int)dgvShowtime.SelectedRows[0].Cells["MaSuatChieu"].Value;
-                    
-                    var suatChieus = await db.SuatChieus
-                        .Where(s => s.MaPhong == maPhong && s.NgayChieu == ngayChieu && s.MaSuatChieu != currentMaSC)
-                        .ToListAsync();
-
-                    bool biTrung = false;
-                    DateTime dtStartNew = ngayChieu.Add(gioBatDau);
-                    DateTime dtEndNew = ngayChieu.Add(gioKetThucRaw);
-
-                    foreach (var s in suatChieus)
+                    db.SuatChieus.Add(sc);
+                }
+                else
+                {
+                    var sc = db.SuatChieus.SingleOrDefault(u => u.MaSuatChieu == currentMaSC);
+                    if (sc != null)
                     {
-                        DateTime dtStartOld = s.NgayChieu.Add(s.GioBatDau);
-                        TimeSpan durationOld = s.GioKetThuc >= s.GioBatDau 
-                            ? s.GioKetThuc.Value - s.GioBatDau 
-                            : s.GioKetThuc.Value.Add(TimeSpan.FromDays(1)) - s.GioBatDau;
-                        DateTime dtEndOld = dtStartOld.Add(durationOld);
-
-                        if (dtStartNew < dtEndOld && dtStartOld < dtEndNew)
-                        {
-                            biTrung = true;
-                            break;
-                        }
-                    }
-
-                    if (biTrung)
-                    {
-                        MessageBox.Show("Phòng này đã có lịch chiếu khác chồng chéo thời gian!");
-                        return;
-                    }
-
-                    if (isAdding)
-                    {
-                        var sc = new tblSuatChieu
-                        {
-                            MaPhim = maPhim,
-                            MaPhong = maPhong,
-                            NgayChieu = ngayChieu,
-                            GioBatDau = gioBatDau,
-                            GioKetThuc = gioKetThuc,
-                            GiaVeCoBan = giaVe,
-                            TrangThai = true
-                        };
-                        db.SuatChieus.Add(sc);
-                    }
-                    else
-                    {
-                        var sc = await db.SuatChieus.FindAsync(currentMaSC);
                         sc.MaPhim = maPhim;
                         sc.MaPhong = maPhong;
                         sc.NgayChieu = ngayChieu;
@@ -266,40 +254,37 @@ namespace WinRap.ViewLINQ
                         sc.GioKetThuc = gioKetThuc;
                         sc.GiaVeCoBan = giaVe;
                     }
-
-                    await db.SaveChangesAsync();
-                    MessageBox.Show(isAdding ? "Thêm mới thành công!" : "Cập nhật thành công!");
-                    
-                    SwitchMode(false);
-                    await LoadDataAsync();
                 }
+
+                db.SaveChanges();
+                MessageBox.Show(AddNew ? "Thêm mới thành công!" : "Cập nhật thành công!");
+                
+                SwitchMode(false);
+                LoadGridData();
             }
             catch (Exception ex)
             {
-                string msg = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
-                MessageBox.Show("Lỗi hệ thống: " + msg);
+                MessageBox.Show("Lỗi hệ thống: " + ex.Message);
             }
         }
 
-        private async void btnXoa_Click(object sender, EventArgs e)
+        private void btnXoa_Click(object sender, EventArgs e)
         {
-            if (dgvShowtime.SelectedRows.Count > 0)
+            if (dgvShowtime.CurrentRow != null)
             {
-                int maSC = Convert.ToInt32(dgvShowtime.SelectedRows[0].Cells["MaSuatChieu"].Value);
-                if (MessageBox.Show($"Bạn có chắc chắn muốn xóa suất chiếu mã {maSC}?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                int maSC = Convert.ToInt32(dgvShowtime.CurrentRow.Cells["MaSuatChieu"].Value);
+                if (MessageBox.Show("Bạn có muốn xóa suất chiếu này không?", "Thông báo", MessageBoxButtons.YesNo, MessageBoxIcon.Stop) == DialogResult.Yes)
                 {
                     try
                     {
-                        using (var db = new DataContext())
+                        // Tìm và xóa bằng LINQ (Trang 9 PDF)
+                        var item = db.SuatChieus.SingleOrDefault(u => u.MaSuatChieu == maSC);
+                        if (item != null)
                         {
-                            var item = await db.SuatChieus.FindAsync(maSC);
-                            if (item != null)
-                            {
-                                db.SuatChieus.Remove(item);
-                                await db.SaveChangesAsync();
-                                MessageBox.Show("Đã xóa suất chiếu thành công!");
-                                await LoadDataAsync();
-                            }
+                            db.SuatChieus.Remove(item);
+                            db.SaveChanges();
+                            MessageBox.Show("Đã xóa thành công!");
+                            LoadGridData();
                         }
                     }
                     catch (Exception ex)
@@ -307,10 +292,6 @@ namespace WinRap.ViewLINQ
                         MessageBox.Show("Lỗi khi xóa: " + ex.Message);
                     }
                 }
-            }
-            else
-            {
-                MessageBox.Show("Vui lòng chọn suất chiếu cần xóa!");
             }
         }
     }

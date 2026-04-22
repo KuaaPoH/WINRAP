@@ -4,7 +4,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 using System.Windows.Forms;
 using WinRap.Model;
 
@@ -12,6 +12,8 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmMovieDetail : Form
     {
+        // Khai báo DataContext dùng chung
+        DataContext db = new DataContext();
         private int _maPhim;
 
         public frmMovieDetail(int maPhim)
@@ -20,37 +22,30 @@ namespace WinRap.ViewLINQ
             _maPhim = maPhim;
         }
 
-        private async void frmMovieDetail_Load(object sender, EventArgs e)
+        private void frmMovieDetail_Load(object sender, EventArgs e)
         {
-            await LoadMovieDataAsync();
+            LoadMovieData();
         }
 
-        private async Task LoadMovieDataAsync()
+        private void LoadMovieData()
         {
             try
             {
-                var movie = await Task.Run(() => {
-                    using (var context = new DataContext())
-                    {
-                        var p = context.Phims.Find(_maPhim);
-                        if (p != null)
-                        {
-                            // Load Eagerly to avoid context disposed error
-                            return new
+                // Lấy dữ liệu phim kèm thể loại bằng LINQ đồng bộ
+                var movie = (from p in db.Phims
+                            join t in db.TheLoais on p.MaTheLoai equals t.MaTheLoai
+                            where p.MaPhim == _maPhim
+                            select new
                             {
                                 p.TenPhim,
-                                TenTheLoai = p.TheLoai.TenTheLoai,
+                                TenTheLoai = t.TenTheLoai,
                                 p.ThoiLuong,
                                 p.DaoDien,
                                 p.DienVien,
                                 p.MoTa,
                                 p.TrangThai,
                                 p.HinhAnh
-                            };
-                        }
-                        return null;
-                    }
-                });
+                            }).SingleOrDefault();
 
                 if (movie != null)
                 {
@@ -90,6 +85,7 @@ namespace WinRap.ViewLINQ
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             base.OnFormClosed(e);
+            // Giải phóng Control khỏi Form cha khi đóng
             this.Parent?.Controls.Remove(this);
         }
     }

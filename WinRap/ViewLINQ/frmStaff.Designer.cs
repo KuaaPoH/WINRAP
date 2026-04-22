@@ -181,7 +181,7 @@ namespace WinRap.ViewLINQ
             this.dgvStaff.AllowUserToResizeRows = false;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.White;
             this.dgvStaff.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            this.dgvStaff.AutoGenerateColumns = false;
+            this.dgvStaff.AutoGenerateColumns = true;
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(245)))), ((int)(((byte)(250)))));
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
@@ -299,6 +299,7 @@ namespace WinRap.ViewLINQ
             this.pnlSearch.PerformLayout();
             this.pnlMainContent.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvStaff)).EndInit();
+            this.Load += new System.EventHandler(this.frmStaff_Load);
             this.ResumeLayout(false);
 
         }

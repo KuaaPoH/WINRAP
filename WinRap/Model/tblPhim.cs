@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -35,10 +34,5 @@ namespace WinRap.Model
         public string HinhAnh { get; set; }
 
         public bool? TrangThai { get; set; }
-
-        [ForeignKey("MaTheLoai")]
-        public virtual tblTheLoai TheLoai { get; set; }
-
-        public virtual ICollection<tblSuatChieu> SuatChieus { get; set; }
     }
 }

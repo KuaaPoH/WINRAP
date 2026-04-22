@@ -1,10 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinRap.Model;
 
@@ -12,11 +12,15 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmStaffNew : Form
     {
+        // Khai báo DataContext dùng chung
+        private DataContext db = new DataContext();
+
         public frmStaffNew()
         {
             InitializeComponent();
         }
 
+        // Hàm mã hóa MD5 (Trang 10 PDF)
         private string GetMD5(string str)
         {
             using (MD5 md5 = MD5.Create())
@@ -30,63 +34,68 @@ namespace WinRap.ViewLINQ
             }
         }
 
-        private async void btnLuu_Click(object sender, EventArgs e)
+        private void btnLuu_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtHoTen.Text) || string.IsNullOrEmpty(txtUsername.Text) || string.IsNullOrEmpty(txtPassword.Text))
+            // Kiểm tra trống (Trang 11 PDF)
+            if (string.IsNullOrEmpty(txtUsername.Text))
             {
-                MessageBox.Show("Vui lòng nhập đầy đủ thông tin!");
+                MessageBox.Show("Tên đăng nhập không được để trống!", "Thông báo");
+                txtUsername.Focus();
                 return;
             }
 
-            string hoTen = txtHoTen.Text.Trim();
+            if (string.IsNullOrEmpty(txtHoTen.Text))
+            {
+                MessageBox.Show("Họ tên không được để trống!", "Thông báo");
+                txtHoTen.Focus();
+                return;
+            }
+
+            if (string.IsNullOrEmpty(txtPassword.Text))
+            {
+                MessageBox.Show("Mật khẩu không được để trống!", "Thông báo");
+                txtPassword.Focus();
+                return;
+            }
+
             string username = txtUsername.Text.Trim();
-            string password = txtPassword.Text;
-            string quyen = cboChucVu.Text;
-            string sdt = txtSDT.Text.Trim();
-            bool trangThai = cboTrangThai.Text == "Hoạt động";
 
             try
             {
-                bool exists = await Task.Run(() => {
-                    using (var db = new DataContext())
-                        return db.NguoiDungs.Any(p => p.TenDangNhap == username);
-                });
-
-                if (exists)
+                // Kiểm tra trùng Username (Trang 11 PDF)
+                bool isExisted = db.NguoiDungs.Any(u => u.TenDangNhap == username);
+                if (isExisted)
                 {
-                    MessageBox.Show("Tên đăng nhập đã tồn tại!");
+                    MessageBox.Show("Tên đăng nhập này đã tồn tại! Vui lòng chọn tên khác.", "Thông báo");
+                    txtUsername.Focus();
                     return;
                 }
 
-                await Task.Run(() => {
-                    using (var db = new DataContext())
-                    {
-                        var nv = new tblNguoiDung
-                        {
-                            HoTen = hoTen,
-                            TenDangNhap = username,
-                            MatKhau = GetMD5(password),
-                            Quyen = quyen,
-                            SoDienThoai = sdt,
-                            TrangThai = trangThai
-                        };
-                        db.NguoiDungs.Add(nv);
-                        db.SaveChanges();
-                    }
-                });
+                // Thêm mới bằng LINQ đồng bộ (Trang 11 PDF)
+                tblNguoiDung newUser = new tblNguoiDung();
+                newUser.TenDangNhap = username;
+                newUser.MatKhau = GetMD5(txtPassword.Text);
+                newUser.HoTen = txtHoTen.Text.Trim();
+                newUser.SoDienThoai = txtSDT.Text.Trim();
+                newUser.Quyen = cboChucVu.Text;
+                newUser.TrangThai = cboTrangThai.Text == "Hoạt động";
 
-                MessageBox.Show("Thêm nhân viên thành công!");
+                db.NguoiDungs.Add(newUser);
+                db.SaveChanges();
+
+                MessageBox.Show("Thêm mới nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi: " + ex.Message);
+                MessageBox.Show("Lỗi hệ thống: " + ex.Message);
             }
         }
 
         private void btnHuy_Click(object sender, EventArgs e)
         {
+            this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
     }

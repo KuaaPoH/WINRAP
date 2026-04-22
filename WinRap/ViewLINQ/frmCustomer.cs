@@ -5,7 +5,6 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinRap.Model;
 
@@ -13,60 +12,38 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmCustomer : Form
     {
-        private DataContext db = new DataContext();
-        private int selectedCustomerID = -1;
-        private List<tblKhachHang> originalList = new List<tblKhachHang>();
+        DataContext db = new DataContext();
 
         public frmCustomer()
         {
             InitializeComponent();
-            LoadData();
         }
 
-        private void LoadData()
+        private void frmCustomer_Load(object sender, EventArgs e)
+        {
+            dgvCustomer.AutoGenerateColumns = false;
+            dgvCustomer.AllowUserToAddRows = false;
+            LoadGridData();
+        }
+
+        private void LoadGridData()
         {
             try
             {
-                db = new DataContext(); // Refresh context
-                originalList = db.KhachHangs.ToList();
-                FilterData();
+                db = new DataContext(); // Khởi tạo lại để xóa cache
+                
+                // Truy vấn LINQ đơn giản nhất (Trang 8 PDF)
+                var data = from k in db.KhachHangs select k;
+                
+                // Gán trực tiếp
+                dgvCustomer.DataSource = data.ToList();
+                
+                // Cập nhật số lượng để xác nhận có dữ liệu
+                lblTotalCount.Text = "Tổng: " + dgvCustomer.Rows.Count.ToString() + " khách hàng";
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi tải dữ liệu: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void FilterData()
-        {
-            string keyword = txtSearch.Text.Trim().ToLower();
-            int filterIndex = cboFilterTier.SelectedIndex;
-
-            var query = originalList.Where(k => 
-                string.IsNullOrEmpty(keyword) || 
-                k.HoTen.ToLower().Contains(keyword) || 
-                k.SoDienThoai.Contains(keyword)
-            );
-
-            // Lọc theo điểm
-            if (filterIndex == 1) // Dưới 1000
-                query = query.Where(k => (k.DiemTichLuy ?? 0) < 1000);
-            else if (filterIndex == 2) // 1000 - 5000
-                query = query.Where(k => (k.DiemTichLuy ?? 0) >= 1000 && (k.DiemTichLuy ?? 0) <= 5000);
-            else if (filterIndex == 3) // Trên 5000
-                query = query.Where(k => (k.DiemTichLuy ?? 0) > 5000);
-
-            var result = query.ToList();
-            dgvCustomer.DataSource = result;
-            lblTotalCount.Text = $"Tổng: {result.Count:00} khách hàng";
-        }
-
-        private void dgvCustomer_CellEnter(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0)
-            {
-                var row = dgvCustomer.Rows[e.RowIndex];
-                selectedCustomerID = Convert.ToInt32(row.Cells["MaKhachHang"].Value);
+                MessageBox.Show("Lỗi kết nối CSDL: " + ex.Message);
             }
         }
 
@@ -76,71 +53,53 @@ namespace WinRap.ViewLINQ
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    LoadData();
+                    LoadGridData();
                 }
             }
         }
 
         private void btnSua_Click(object sender, EventArgs e)
         {
-            if (selectedCustomerID == -1)
-            {
-                MessageBox.Show("Vui lòng chọn khách hàng cần sửa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            using (frmCustomerEdit frm = new frmCustomerEdit(selectedCustomerID))
+            if (dgvCustomer.CurrentRow == null) return;
+            int maKH = Convert.ToInt32(dgvCustomer.CurrentRow.Cells["MaKhachHang"].Value);
+            using (frmCustomerEdit frm = new frmCustomerEdit(maKH))
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    LoadData();
+                    LoadGridData();
                 }
             }
         }
 
         private void btnXoa_Click(object sender, EventArgs e)
         {
-            if (selectedCustomerID == -1)
+            if (dgvCustomer.CurrentRow == null) return;
+            int maKH = Convert.ToInt32(dgvCustomer.CurrentRow.Cells["MaKhachHang"].Value);
+            if (MessageBox.Show("Bạn có chắc muốn xóa?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                MessageBox.Show("Vui lòng chọn khách hàng cần xóa!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (MessageBox.Show("Bạn có chắc chắn muốn xóa khách hàng này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                try
+                var kh = db.KhachHangs.SingleOrDefault(u => u.MaKhachHang == maKH);
+                if (kh != null)
                 {
-                    var kh = db.KhachHangs.Find(selectedCustomerID);
-                    if (kh != null)
-                    {
-                        if (kh.Ves.Any())
-                        {
-                            MessageBox.Show("Không thể xóa khách hàng này vì đã có lịch sử đặt vé!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            return;
-                        }
-
-                        db.KhachHangs.Remove(kh);
-                        db.SaveChanges();
-                        MessageBox.Show("Xóa khách hàng thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadData();
-                        selectedCustomerID = -1;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Lỗi khi xóa: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    db.KhachHangs.Remove(kh);
+                    db.SaveChanges();
+                    LoadGridData();
                 }
             }
         }
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
-            FilterData();
+            // Tạm thời để trống để kiểm tra việc load dữ liệu gốc
         }
 
         private void cboFilterTier_SelectedIndexChanged(object sender, EventArgs e)
         {
-            FilterData();
+            // Tạm thời để trống để kiểm tra việc load dữ liệu gốc
+        }
+
+        private void btnLamMoi_Click(object sender, EventArgs e)
+        {
+            LoadGridData();
         }
     }
 }

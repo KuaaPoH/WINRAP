@@ -41,21 +41,22 @@ namespace WinRap.ViewLINQ
         {
             flpMovies.Controls.Clear();
             
-            // Hiển thị trạng thái đang tải (tùy chọn)
+    
             Label lblLoading = new Label { Text = "Đang tải dữ liệu...", AutoSize = true, Location = new Point(35, 10) };
             flpMovies.Controls.Add(lblLoading);
 
             try
             {
-                // Chạy truy vấn DB trên luồng phụ
+        
                 var listMovies = await Task.Run(() => {
                     using (var context = new DataContext())
                     {
-                        return context.SuatChieus
-                            .Where(sc => sc.NgayChieu == date.Date && sc.TrangThai == true)
-                            .Select(sc => sc.Phim)
-                            .Distinct()
-                            .ToList();
+                        return (from sc in context.SuatChieus
+                                join p in context.Phims on sc.MaPhim equals p.MaPhim
+                                where sc.NgayChieu == date.Date && sc.TrangThai == true
+                                select p)
+                                .Distinct()
+                                .ToList();
                     }
                 });
 
@@ -90,7 +91,7 @@ namespace WinRap.ViewLINQ
             card.Cursor = Cursors.Hand;
             card.Tag = id;
 
-            // Đổ bóng
+         
             card.ShadowDecoration.Enabled = true;
             card.ShadowDecoration.BorderRadius = 15;
             card.ShadowDecoration.Depth = 5;
@@ -167,15 +168,16 @@ namespace WinRap.ViewLINQ
                 var listSC = await Task.Run(() => {
                     using (var context = new DataContext())
                     {
-                        return context.SuatChieus
-                            .Where(sc => sc.MaPhim == movieId && sc.NgayChieu == date.Date && sc.TrangThai == true)
-                            .OrderBy(sc => sc.GioBatDau)
-                            .Select(sc => new {
-                                ID = sc.MaSuatChieu,
-                                Gio = sc.GioBatDau,
-                                TenPhong = sc.PhongChieu.TenPhong
-                            })
-                            .ToList();
+                        return (from sc in context.SuatChieus
+                                join p in context.PhongChieus on sc.MaPhong equals p.MaPhong
+                                where sc.MaPhim == movieId && sc.NgayChieu == date.Date && sc.TrangThai == true
+                                orderby sc.GioBatDau
+                                select new {
+                                    ID = sc.MaSuatChieu,
+                                    Gio = sc.GioBatDau,
+                                    TenPhong = p.TenPhong
+                                })
+                                .ToList();
                     }
                 });
 
@@ -209,17 +211,24 @@ namespace WinRap.ViewLINQ
                 return;
             }
 
-            // Lấy ID Suất chiếu đã chọn
             var selectedSC = (dynamic)cboShowtime.SelectedItem;
             int maSuatChieu = selectedSC.ID;
 
-            // Truy vấn lấy thông tin phòng từ CSDL
-            var suatChieu = db.SuatChieus.Find(maSuatChieu);
-            if (suatChieu != null && suatChieu.PhongChieu != null)
+           
+            var info = (from sc in db.SuatChieus
+                        join p in db.PhongChieus on sc.MaPhong equals p.MaPhong
+                        where sc.MaSuatChieu == maSuatChieu
+                        select new {
+                            p.SoHang,
+                            p.SoCot,
+                            p.TenPhong
+                        }).FirstOrDefault();
+
+            if (info != null)
             {
-                int rows = suatChieu.PhongChieu.SoHang ?? 0;
-                int cols = suatChieu.PhongChieu.SoCot ?? 0;
-                string roomName = suatChieu.PhongChieu.TenPhong;
+                int rows = info.SoHang ?? 0;
+                int cols = info.SoCot ?? 0;
+                string roomName = info.TenPhong;
 
                 frmMain.Instance.container(new frmSeatLayout(rows, cols, roomName));
             }

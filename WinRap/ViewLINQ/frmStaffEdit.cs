@@ -1,10 +1,10 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using WinRap.Model;
 
@@ -12,27 +12,27 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmStaffEdit : Form
     {
-        private int _id;
+        // Khai báo DataContext dùng chung
+        private DataContext db = new DataContext();
+        private int _maNV;
 
         public frmStaffEdit(int id)
         {
             InitializeComponent();
-            _id = id;
+            _maNV = id;
         }
 
-        private async void frmStaffEdit_Load(object sender, EventArgs e)
+        private void frmStaffEdit_Load(object sender, EventArgs e)
         {
-            await LoadDataAsync();
+            LoadStaffData();
         }
 
-        private async Task LoadDataAsync()
+        private void LoadStaffData()
         {
             try
             {
-                var nv = await Task.Run(() => {
-                    using (var db = new DataContext())
-                        return db.NguoiDungs.Find(_id);
-                });
+                // Tìm nhân viên bằng LINQ đồng bộ (Trang 9 PDF)
+                var nv = db.NguoiDungs.SingleOrDefault(u => u.MaNguoiDung == _maNV);
 
                 if (nv != null)
                 {
@@ -45,10 +45,11 @@ namespace WinRap.ViewLINQ
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi: " + ex.Message);
+                MessageBox.Show("Lỗi tải dữ liệu: " + ex.Message);
             }
         }
 
+        // Hàm mã hóa MD5 (Trang 10 PDF)
         private string GetMD5(string str)
         {
             using (MD5 md5 = MD5.Create())
@@ -62,53 +63,61 @@ namespace WinRap.ViewLINQ
             }
         }
 
-        private async void btnLuu_Click(object sender, EventArgs e)
+        private void btnLuu_Click(object sender, EventArgs e)
         {
-            string hoTen = txtHoTen.Text.Trim();
+            // Kiểm tra trống
+            if (string.IsNullOrEmpty(txtHoTen.Text))
+            {
+                MessageBox.Show("Họ tên không được để trống!");
+                txtHoTen.Focus();
+                return;
+            }
+
             string username = txtUsername.Text.Trim();
-            string password = txtPassword.Text;
-            string quyen = cboChucVu.Text;
-            string sdt = txtSDT.Text.Trim();
-            bool trangThai = cboTrangThai.Text == "Hoạt động";
 
             try
             {
-                await Task.Run(() => {
-                    using (var db = new DataContext())
+                // Cập nhật bằng LINQ đồng bộ (Trang 11 PDF)
+                var userUpdate = db.NguoiDungs.SingleOrDefault(u => u.MaNguoiDung == _maNV);
+                
+                if (userUpdate != null)
+                {
+                    // Kiểm tra nếu đổi Username thì không được trùng với người khác
+                    if (userUpdate.TenDangNhap != username && db.NguoiDungs.Any(u => u.TenDangNhap == username))
                     {
-                        var nv = db.NguoiDungs.Find(_id);
-                        if (nv != null)
-                        {
-                            if (nv.TenDangNhap != username && db.NguoiDungs.Any(p => p.TenDangNhap == username))
-                            {
-                                throw new Exception("Tên đăng nhập đã tồn tại!");
-                            }
-
-                            nv.HoTen = hoTen;
-                            nv.TenDangNhap = username;
-                            nv.Quyen = quyen;
-                            nv.SoDienThoai = sdt;
-                            nv.TrangThai = trangThai;
-                            if (!string.IsNullOrEmpty(password))
-                                nv.MatKhau = GetMD5(password);
-                            
-                            db.SaveChanges();
-                        }
+                        MessageBox.Show("Tên đăng nhập này đã tồn tại!");
+                        txtUsername.Focus();
+                        return;
                     }
-                });
 
-                MessageBox.Show("Cập nhật thành công!");
-                this.DialogResult = DialogResult.OK;
-                this.Close();
+                    userUpdate.HoTen = txtHoTen.Text.Trim();
+                    userUpdate.TenDangNhap = username;
+                    userUpdate.Quyen = cboChucVu.Text;
+                    userUpdate.SoDienThoai = txtSDT.Text.Trim();
+                    userUpdate.TrangThai = cboTrangThai.Text == "Hoạt động";
+
+                    // Chỉ đổi mật khẩu nếu có nhập mật khẩu mới
+                    if (!string.IsNullOrEmpty(txtPassword.Text))
+                    {
+                        userUpdate.MatKhau = GetMD5(txtPassword.Text);
+                    }
+                    
+                    db.SaveChanges();
+
+                    MessageBox.Show("Cập nhật thông tin nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    this.DialogResult = DialogResult.OK;
+                    this.Close();
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi: " + ex.Message);
+                MessageBox.Show("Lỗi hệ thống: " + ex.Message);
             }
         }
 
         private void btnHuy_Click(object sender, EventArgs e)
         {
+            this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
     }
