@@ -13,7 +13,7 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmMovie : Form
     {
-        // Khai báo DataContext dùng chung cho Form
+        
         DataContext db = new DataContext();
         private List<object> originalList = new List<object>();
 
@@ -47,7 +47,7 @@ namespace WinRap.ViewLINQ
         {
             try
             {
-                // Lấy dữ liệu bằng LINQ đồng bộ
+               
                 var listPhim = (from p in db.Phims
                                join t in db.TheLoais on p.MaTheLoai equals t.MaTheLoai
                                select new
@@ -132,7 +132,7 @@ namespace WinRap.ViewLINQ
 
                 if (MessageBox.Show("Bạn có chắc muốn xóa phim này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Stop) == DialogResult.Yes)
                 {
-                    // Xóa bằng LINQ đồng bộ (Trang 9 PDF)
+                   
                     var phim = db.Phims.SingleOrDefault(p => p.MaPhim == maPhim);
                     if (phim != null)
                     {

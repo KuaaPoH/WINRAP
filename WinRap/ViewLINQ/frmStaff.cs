@@ -12,7 +12,7 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmStaff : Form
     {
-        // Khai báo DataContext dùng chung cho Form
+       
         private DataContext db = new DataContext();
 
         public frmStaff()
@@ -31,22 +31,22 @@ namespace WinRap.ViewLINQ
         {
             try
             {
-                // Làm mới context
+             
                 db = new DataContext();
                 
                 string keyword = txtSearch.Text.Trim().ToLower();
                 int filterIndex = cboFilterRole.SelectedIndex;
 
-                // Lấy dữ liệu
+              
                 var query = from p in db.NguoiDungs select p;
 
-                // Lọc theo từ khóa
+             
                 if (!string.IsNullOrEmpty(keyword))
                 {
                     query = query.Where(p => p.HoTen.ToLower().Contains(keyword) || p.TenDangNhap.ToLower().Contains(keyword));
                 }
 
-                // Lọc theo chức vụ
+               
                 if (filterIndex == 1) 
                     query = query.Where(p => p.Quyen == "Quản trị viên");
                 else if (filterIndex == 2) 

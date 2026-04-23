@@ -30,15 +30,12 @@ namespace WinRap.ViewLINQ
         {
             try
             {
-                db = new DataContext(); // Khởi tạo lại để xóa cache
+                db = new DataContext();
                 
-                // Truy vấn LINQ đơn giản nhất (Trang 8 PDF)
                 var data = from k in db.KhachHangs select k;
                 
-                // Gán trực tiếp
                 dgvCustomer.DataSource = data.ToList();
                 
-                // Cập nhật số lượng để xác nhận có dữ liệu
                 lblTotalCount.Text = "Tổng: " + dgvCustomer.Rows.Count.ToString() + " khách hàng";
             }
             catch (Exception ex)
@@ -89,12 +86,10 @@ namespace WinRap.ViewLINQ
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
-            // Tạm thời để trống để kiểm tra việc load dữ liệu gốc
         }
 
         private void cboFilterTier_SelectedIndexChanged(object sender, EventArgs e)
         {
-            // Tạm thời để trống để kiểm tra việc load dữ liệu gốc
         }
 
         private void btnLamMoi_Click(object sender, EventArgs e)

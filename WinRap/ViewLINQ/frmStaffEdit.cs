@@ -12,7 +12,6 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmStaffEdit : Form
     {
-        // Khai báo DataContext dùng chung
         private DataContext db = new DataContext();
         private int _maNV;
 
@@ -31,7 +30,7 @@ namespace WinRap.ViewLINQ
         {
             try
             {
-                // Tìm nhân viên bằng LINQ đồng bộ (Trang 9 PDF)
+               
                 var nv = db.NguoiDungs.SingleOrDefault(u => u.MaNguoiDung == _maNV);
 
                 if (nv != null)
@@ -49,7 +48,6 @@ namespace WinRap.ViewLINQ
             }
         }
 
-        // Hàm mã hóa MD5 (Trang 10 PDF)
         private string GetMD5(string str)
         {
             using (MD5 md5 = MD5.Create())
@@ -65,7 +63,7 @@ namespace WinRap.ViewLINQ
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
-            // Kiểm tra trống
+            
             if (string.IsNullOrEmpty(txtHoTen.Text))
             {
                 MessageBox.Show("Họ tên không được để trống!");
@@ -77,12 +75,12 @@ namespace WinRap.ViewLINQ
 
             try
             {
-                // Cập nhật bằng LINQ đồng bộ (Trang 11 PDF)
+               
                 var userUpdate = db.NguoiDungs.SingleOrDefault(u => u.MaNguoiDung == _maNV);
                 
                 if (userUpdate != null)
                 {
-                    // Kiểm tra nếu đổi Username thì không được trùng với người khác
+                 
                     if (userUpdate.TenDangNhap != username && db.NguoiDungs.Any(u => u.TenDangNhap == username))
                     {
                         MessageBox.Show("Tên đăng nhập này đã tồn tại!");
@@ -96,7 +94,6 @@ namespace WinRap.ViewLINQ
                     userUpdate.SoDienThoai = txtSDT.Text.Trim();
                     userUpdate.TrangThai = cboTrangThai.Text == "Hoạt động";
 
-                    // Chỉ đổi mật khẩu nếu có nhập mật khẩu mới
                     if (!string.IsNullOrEmpty(txtPassword.Text))
                     {
                         userUpdate.MatKhau = GetMD5(txtPassword.Text);

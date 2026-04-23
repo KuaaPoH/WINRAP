@@ -12,7 +12,7 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmTheLoai : Form
     {
-        // 1. Khai báo DataContext dùng chung cho Form
+  
         DataContext db = new DataContext();
         bool AddNew = false;
         private List<object> originalList = new List<object>();
@@ -39,7 +39,6 @@ namespace WinRap.ViewLINQ
             btnLuu.Visible = isEdit;
             btnKhongLuu.Visible = isEdit;
 
-            // Sử dụng Enabled thay vì ReadOnly để textbox đổi sang màu xám như frmShowtime
             txtTenTheLoai.Enabled = isEdit;
             dgvTheLoai.Enabled = !isEdit;
         }
@@ -48,7 +47,7 @@ namespace WinRap.ViewLINQ
         {
             try
             {
-                // Làm mới context để lấy dữ liệu mới nhất
+        
                 db = new DataContext();
                 var list = db.TheLoais.Select(t => new { t.MaTheLoai, t.TenTheLoai }).ToList();
                 originalList = list.Cast<object>().ToList();
@@ -82,7 +81,7 @@ namespace WinRap.ViewLINQ
         {
             if (e.RowIndex >= 0)
             {
-                // Lấy dữ liệu trực tiếp từ Grid đổ vào TextBox
+            
                 txtTenTheLoai.Text = dgvTheLoai.Rows[e.RowIndex].Cells["TenTheLoai"].Value?.ToString();
             }
         }
@@ -119,11 +118,10 @@ namespace WinRap.ViewLINQ
             {
                 try
                 {
-                    // Tìm và xóa bằng LINQ
                     var tl = db.TheLoais.SingleOrDefault(u => u.MaTheLoai == id);
                     if (tl != null)
                     {
-                        // Kiểm tra ràng buộc thực tế trong DB
+                     
                         bool hasMovies = db.Phims.Any(p => p.MaTheLoai == id);
                         if (hasMovies)
                         {
@@ -169,7 +167,7 @@ namespace WinRap.ViewLINQ
             {
                 if (AddNew)
                 {
-                    // Kiểm tra trùng tên
+                 
                     if (db.TheLoais.Any(t => t.TenTheLoai == tenTL))
                     {
                         MessageBox.Show("Tên thể loại này đã tồn tại!");
@@ -177,7 +175,7 @@ namespace WinRap.ViewLINQ
                         return;
                     }
 
-                    // Thêm mới bằng LINQ đồng bộ
+               
                     tblTheLoai tl = new tblTheLoai { TenTheLoai = tenTL };
                     db.TheLoais.Add(tl);
                     db.SaveChanges();
@@ -186,11 +184,11 @@ namespace WinRap.ViewLINQ
                 else
                 {
                     int id = (int)dgvTheLoai.CurrentRow.Cells["MaTheLoai"].Value;
-                    // Tìm đối tượng bằng LINQ và cập nhật
+            
                     var tl = db.TheLoais.SingleOrDefault(u => u.MaTheLoai == id);
                     if (tl != null)
                     {
-                        // Kiểm tra trùng tên với các bản ghi khác
+                 
                         if (tl.TenTheLoai != tenTL && db.TheLoais.Any(t => t.TenTheLoai == tenTL && t.MaTheLoai != id))
                         {
                             MessageBox.Show("Tên thể loại mới đã tồn tại!");

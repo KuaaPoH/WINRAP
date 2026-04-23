@@ -12,7 +12,7 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmStaffNew : Form
     {
-        // Khai báo DataContext dùng chung
+      
         private DataContext db = new DataContext();
 
         public frmStaffNew()
@@ -20,7 +20,6 @@ namespace WinRap.ViewLINQ
             InitializeComponent();
         }
 
-        // Hàm mã hóa MD5 (Trang 10 PDF)
         private string GetMD5(string str)
         {
             using (MD5 md5 = MD5.Create())
@@ -36,7 +35,7 @@ namespace WinRap.ViewLINQ
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
-            // Kiểm tra trống (Trang 11 PDF)
+          
             if (string.IsNullOrEmpty(txtUsername.Text))
             {
                 MessageBox.Show("Tên đăng nhập không được để trống!", "Thông báo");
@@ -62,7 +61,7 @@ namespace WinRap.ViewLINQ
 
             try
             {
-                // Kiểm tra trùng Username (Trang 11 PDF)
+             
                 bool isExisted = db.NguoiDungs.Any(u => u.TenDangNhap == username);
                 if (isExisted)
                 {
@@ -71,7 +70,7 @@ namespace WinRap.ViewLINQ
                     return;
                 }
 
-                // Thêm mới bằng LINQ đồng bộ (Trang 11 PDF)
+              
                 tblNguoiDung newUser = new tblNguoiDung();
                 newUser.TenDangNhap = username;
                 newUser.MatKhau = GetMD5(txtPassword.Text);

@@ -66,7 +66,7 @@ namespace WinRap.ViewLINQ
         {
             try
             {
-                // Kiểm tra trống (Trang 11 PDF)
+            
                 if (string.IsNullOrWhiteSpace(txtTenPhim.Text))
                 {
                     MessageBox.Show("Vui lòng nhập tên phim!");
@@ -80,7 +80,7 @@ namespace WinRap.ViewLINQ
                     return;
                 }
 
-                // Xử lý ảnh đồng bộ
+           
                 string fileName = "";
                 if (!string.IsNullOrEmpty(selectedImagePath))
                 {
@@ -90,7 +90,7 @@ namespace WinRap.ViewLINQ
                     File.Copy(selectedImagePath, Path.Combine(destPath, fileName), true);
                 }
 
-                // Thêm mới bằng LINQ đồng bộ (Trang 11 PDF)
+             
                 tblPhim phim = new tblPhim
                 {
                     TenPhim = txtTenPhim.Text.Trim(),

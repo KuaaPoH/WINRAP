@@ -21,13 +21,12 @@ namespace WinRap.ViewLINQ
         private int? _maSuatChieuHienTai = null;
         private Timer _refreshTimer;
 
-        // Bảng màu Lotte chuẩn
+        
         private readonly Color clrGheThuong = Color.FromArgb(74, 101, 114); 
         private readonly Color clrGheVip = Color.FromArgb(231, 76, 60);     
         private readonly Color clrGheDaBan = Color.FromArgb(149, 165, 166); 
         private readonly Color clrGheDangChon = Color.FromArgb(94, 148, 255);
 
-        // Dictionary để truy xuất Button nhanh qua mã ghế (Vd: "A1")
         private Dictionary<string, Guna2Button> _seatButtons = new Dictionary<string, Guna2Button>();
         private bool _isDataLoaded = false;
 
@@ -42,7 +41,7 @@ namespace WinRap.ViewLINQ
                 if (_isDataLoaded) RepositionSeats();
             };
 
-            // Khởi tạo Timer để cập nhật Real-time mỗi 5 giây
+           
             _refreshTimer = new Timer();
             _refreshTimer.Interval = 5000;
             _refreshTimer.Tick += async (s, e) => await UpdateRealtimeStatus();
@@ -85,7 +84,7 @@ namespace WinRap.ViewLINQ
                         _rows = room.SoHang ?? 10;
                         _cols = room.SoCot ?? 12;
 
-                        // Tìm suất chiếu đang diễn ra hoặc sắp diễn ra gần nhất
+                       
                         DateTime now = DateTime.Now;
                         var showtimeData = await (from s in db.SuatChieus
                                                  join p in db.Phims on s.MaPhim equals p.MaPhim
@@ -122,10 +121,9 @@ namespace WinRap.ViewLINQ
 
             using (var db = new DataContext())
             {
-                // Lấy danh sách ghế thực tế trong DB
                 var listGhe = db.Ghes.Where(g => g.MaPhong == _maPhong).ToList();
 
-                // Nếu chưa có ghế nào trong DB, tự động tạo mới theo layout
+               
                 if (listGhe.Count == 0)
                 {
                     listGhe = InitializeSeatsInDB();
@@ -141,7 +139,7 @@ namespace WinRap.ViewLINQ
                         Font = new Font("Segoe UI", 7.5F, FontStyle.Bold),
                         ForeColor = Color.White,
                         Cursor = Cursors.Hand,
-                        Tag = ghe, // Lưu object ghe để xử lý Click
+                        Tag = ghe, 
                         FillColor = ghe.MaLoaiGhe == 2 ? clrGheVip : clrGheThuong
                     };
 
@@ -154,7 +152,7 @@ namespace WinRap.ViewLINQ
             pnlSeatPreview.ResumeLayout();
             RepositionSeats();
             
-            // Cập nhật trạng thái đã bán ngay lập tức
+            
             _ = UpdateRealtimeStatus();
         }
 
@@ -174,7 +172,7 @@ namespace WinRap.ViewLINQ
                             TenGhe = seatCode,
                             Hang = alpha[i].ToString(),
                             Cot = j,
-                            MaLoaiGhe = 1 // Mặc định là ghế thường
+                            MaLoaiGhe = 1 
                         };
                         db.Ghes.Add(ghe);
                         newSeats.Add(ghe);
@@ -190,14 +188,14 @@ namespace WinRap.ViewLINQ
             Guna2Button btn = sender as Guna2Button;
             tblGhe ghe = btn.Tag as tblGhe;
 
-            // Nếu ghế đã bán thì không cho đổi loại trong chế độ giám sát (tùy chọn)
+           
             if (btn.FillColor == clrGheDaBan)
             {
                 MessageBox.Show("Ghế này đã có khách đặt, không thể thay đổi loại ghế lúc này!", "Thông báo");
                 return;
             }
 
-            // Đổi loại ghế: Thường (1) <-> VIP (2)
+          
             int newType = (ghe.MaLoaiGhe == 2) ? 1 : 2;
             
             try {
@@ -205,10 +203,10 @@ namespace WinRap.ViewLINQ
                     var seatInDb = await db.Ghes.FindAsync(ghe.MaGhe);
                     if (seatInDb != null) {
                         seatInDb.MaLoaiGhe = newType;
-                        ghe.MaLoaiGhe = newType; // Cập nhật local object
+                        ghe.MaLoaiGhe = newType; 
                         await db.SaveChangesAsync();
                         
-                        // Cập nhật giao diện
+                      
                         btn.FillColor = (newType == 2) ? clrGheVip : clrGheThuong;
                     }
                 }
@@ -225,7 +223,7 @@ namespace WinRap.ViewLINQ
             {
                 using (var db = new DataContext())
                 {
-                    // Lấy danh sách mã ghế đã bán của suất chiếu hiện tại
+                  
                     var soldSeats = await (from v in db.Ves
                                           join g in db.Ghes on v.MaGhe equals g.MaGhe
                                           where v.MaSuatChieu == _maSuatChieuHienTai && v.TrangThai != "Đã hủy"
@@ -240,7 +238,7 @@ namespace WinRap.ViewLINQ
                         if (soldSeats.Contains(seatCode))
                         {
                             btn.FillColor = clrGheDaBan;
-                            btn.Enabled = false; // Vô hiệu hóa khi đã bán
+                            btn.Enabled = false; 
                         }
                         else
                         {
@@ -267,7 +265,7 @@ namespace WinRap.ViewLINQ
             int startY = 20;
 
             pnlSeatPreview.SuspendLayout();
-            // Sắp xếp lại dựa trên Hang và Cot trong Tag
+       
             foreach (Control ctrl in pnlSeatPreview.Controls)
             {
                 if (ctrl is Guna2Button btn && btn.Tag is tblGhe ghe)

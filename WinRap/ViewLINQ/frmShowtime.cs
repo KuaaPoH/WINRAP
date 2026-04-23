@@ -13,7 +13,7 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmShowtime : Form
     {
-        // 1. Khai báo biến toàn cục theo phong cách PDF
+       
         DataContext db = new DataContext();
         bool AddNew = false;
 
@@ -53,7 +53,7 @@ namespace WinRap.ViewLINQ
         {
             try
             {
-                // Lấy dữ liệu bằng LINQ theo phong cách PDF
+               
                 var data = (from s in db.SuatChieus
                            join p in db.Phims on s.MaPhim equals p.MaPhim
                            join r in db.PhongChieus on s.MaPhong equals r.MaPhong
@@ -77,7 +77,7 @@ namespace WinRap.ViewLINQ
             }
         }
 
-        // Giữ nguyên hàm SwitchMode theo yêu cầu
+       
         private void SwitchMode(bool isEditMode)
         {
             btnThem.Visible = !isEditMode;
@@ -90,7 +90,6 @@ namespace WinRap.ViewLINQ
 
             dgvShowtime.Enabled = !isEditMode;
             
-            // Enabled/Disabled các input để tránh sửa nhầm khi không ở chế độ Edit
             cboMovie.Enabled = isEditMode;
             cboRoom.Enabled = isEditMode;
             dtpDate.Enabled = isEditMode;
@@ -122,7 +121,6 @@ namespace WinRap.ViewLINQ
                     DataGridViewRow row = dgvShowtime.Rows[e.RowIndex];
                     int maSC = Convert.ToInt32(row.Cells["MaSuatChieu"].Value);
 
-                    // Tìm đối tượng trong DB theo ID (Phong cách PDF trang 9)
                     var sc = db.SuatChieus.SingleOrDefault(u => u.MaSuatChieu == maSC);
                     if (sc != null)
                     {
@@ -168,7 +166,6 @@ namespace WinRap.ViewLINQ
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
-            // Kiểm tra trống (Trang 11 PDF)
             if (string.IsNullOrEmpty(txtStartTime.Text))
             {
                 MessageBox.Show("Vui lòng nhập giờ bắt đầu!");
@@ -191,13 +188,12 @@ namespace WinRap.ViewLINQ
                 int maPhong = (int)cboRoom.SelectedValue;
                 DateTime ngayChieu = dtpDate.Value.Date;
 
-                // 1. Tính toán giờ kết thúc (Logic nghiệp vụ giữ lại)
                 var phim = db.Phims.Find(maPhim);
                 TimeSpan duration = TimeSpan.FromMinutes(phim.ThoiLuong + 15);
                 TimeSpan gioKetThuc = gioBatDau.Add(duration);
                 if (gioKetThuc.Days > 0) gioKetThuc = new TimeSpan(gioKetThuc.Hours, gioKetThuc.Minutes, gioKetThuc.Seconds);
 
-                // 2. Kiểm tra va chạm lịch chiếu (Logic nghiệp vụ giữ lại)
+             
                 int currentMaSC = AddNew ? -1 : (int)dgvShowtime.CurrentRow.Cells["MaSuatChieu"].Value;
                 var suatChieus = db.SuatChieus
                     .Where(s => s.MaPhong == maPhong && s.NgayChieu == ngayChieu && s.MaSuatChieu != currentMaSC)
@@ -228,7 +224,7 @@ namespace WinRap.ViewLINQ
                     return;
                 }
 
-                // 3. Thực hiện lưu dữ liệu (Phong cách PDF trang 11)
+               
                 if (AddNew)
                 {
                     tblSuatChieu sc = new tblSuatChieu();
@@ -277,7 +273,7 @@ namespace WinRap.ViewLINQ
                 {
                     try
                     {
-                        // Tìm và xóa bằng LINQ (Trang 9 PDF)
+                        
                         var item = db.SuatChieus.SingleOrDefault(u => u.MaSuatChieu == maSC);
                         if (item != null)
                         {

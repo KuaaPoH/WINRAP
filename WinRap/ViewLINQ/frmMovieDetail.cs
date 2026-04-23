@@ -12,7 +12,7 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmMovieDetail : Form
     {
-        // Khai báo DataContext dùng chung
+       
         DataContext db = new DataContext();
         private int _maPhim;
 
@@ -31,7 +31,7 @@ namespace WinRap.ViewLINQ
         {
             try
             {
-                // Lấy dữ liệu phim kèm thể loại bằng LINQ đồng bộ
+               
                 var movie = (from p in db.Phims
                             join t in db.TheLoais on p.MaTheLoai equals t.MaTheLoai
                             where p.MaPhim == _maPhim
@@ -85,7 +85,7 @@ namespace WinRap.ViewLINQ
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             base.OnFormClosed(e);
-            // Giải phóng Control khỏi Form cha khi đóng
+            
             this.Parent?.Controls.Remove(this);
         }
     }

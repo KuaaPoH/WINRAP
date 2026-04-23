@@ -10,7 +10,6 @@ namespace WinRap.ViewLINQ
 {
     public partial class frmCustomerEdit : Form
     {
-        // Khai báo DataContext dùng chung
         private DataContext db = new DataContext();
         private int _maKH;
 
@@ -29,7 +28,7 @@ namespace WinRap.ViewLINQ
         {
             try
             {
-                // Tìm khách hàng bằng LINQ đồng bộ (Trang 9 PDF)
+              
                 var kh = db.KhachHangs.SingleOrDefault(u => u.MaKhachHang == _maKH);
 
                 if (kh != null)
@@ -47,7 +46,6 @@ namespace WinRap.ViewLINQ
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
-            // Kiểm tra trống
             if (string.IsNullOrWhiteSpace(txtHoTen.Text))
             {
                 MessageBox.Show("Vui lòng nhập họ tên!");
@@ -57,7 +55,7 @@ namespace WinRap.ViewLINQ
 
             try
             {
-                // Cập nhật bằng LINQ đồng bộ (Trang 11 PDF)
+               
                 var kh = db.KhachHangs.SingleOrDefault(u => u.MaKhachHang == _maKH);
                 if (kh != null)
                 {

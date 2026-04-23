@@ -47,7 +47,7 @@ namespace WinRap.ViewLINQ
         {
             try
             {
-                // Tìm phim đồng bộ (Trang 9 PDF)
+               
                 var phim = db.Phims.SingleOrDefault(p => p.MaPhim == _maPhim);
 
                 if (phim != null)
@@ -120,7 +120,7 @@ namespace WinRap.ViewLINQ
                     return;
                 }
 
-                // Xử lý ảnh
+          
                 string fileName = currentImageName;
                 if (!string.IsNullOrEmpty(selectedImagePath))
                 {
@@ -130,7 +130,7 @@ namespace WinRap.ViewLINQ
                     File.Copy(selectedImagePath, Path.Combine(destPath, fileName), true);
                 }
 
-                // Cập nhật bằng LINQ đồng bộ (Trang 11 PDF)
+               
                 var phim = db.Phims.SingleOrDefault(p => p.MaPhim == _maPhim);
                 if (phim != null)
                 {
