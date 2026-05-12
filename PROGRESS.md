@@ -27,15 +27,19 @@ Dự án xây dựng ứng dụng quản lý rạp chiếu phim bằng **C# Wind
 - [x] **frmShowtime:** Cập nhật ComboBox chỉ hiển thị Phim "Đang chiếu" và Phòng "Sẵn sàng". Hoàn thiện kiểm tra trùng lịch (Overlap) cho suất chiếu.
 - [x] **Quản lý Phòng (Hoàn thành):**
     - [x] **frmRoom:** Màn hình Giám sát rạp chuyên nghiệp, hiển thị trạng thái suất chiếu và tỷ lệ lấp đầy ghế real-time.
-    - [x] **frmRoomConfig (Mới):** Tách biệt chức năng cấu hình thông tin phòng (Tên, Loại, Trạng thái, Ghi chú) với giao diện nhập liệu thông minh.
+    - [x] **frmRoomConfig (Cập nhật):** Tách biệt chức năng cấu hình và tối ưu hóa điều hướng (Sử dụng nút Quay lại thay cho nút Hủy).
     - [x] **frmRoomEdit:** Sơ đồ ghế hoạt động ổn định, tích hợp cập nhật trạng thái đã bán real-time qua Timer và cơ chế click đổi loại ghế (Thường/VIP) đồng bộ trực tiếp với CSDL.
+- [x] **Hệ thống & Bảo mật (Mới):**
+    - [x] **frmLogin:** Hoàn thiện giao diện hiện đại (Gradient, Shadow, DragControl) và bảo mật MD5.
+    - [x] **frmMain:** Cập nhật Header hiển thị lời chào "Xin chào, [Tên người dùng]!".
 - [ ] **frmTicket:** Lập trình logic Bán vé và Sơ đồ ghế động.
 - [ ] **Thống kê:** Lập trình báo cáo doanh thu.
 
 ---
-*Cập nhật ngày: 16/04/2026*
-- [ ] Lập trình in hóa đơn vé.
-- [ ] **frmLogin:** Hoàn thiện bảo mật hệ thống.
+*Cập nhật ngày: 12/05/2026*
+- [x] Triển khai và hoàn thiện chức năng Đăng nhập theo yêu cầu Đồ án TH06.
+- [x] Tinh chỉnh giao diện Header Form chính.
+- [x] Tối ưu hóa luồng điều hướng trong Cấu hình phòng.
 
 ---
-*Cập nhật ngày: 14/04/2026*
+*Cập nhật ngày: 16/04/2026*

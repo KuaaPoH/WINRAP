@@ -21,7 +21,6 @@ namespace WinRap.ViewLINQ
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle8 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
             this.pnlTop = new Guna.UI2.WinForms.Guna2Panel();
-            this.btnBack = new Guna.UI2.WinForms.Guna2Button();
             this.pnlMain = new Guna.UI2.WinForms.Guna2Panel();
             this.dgvRooms = new Guna.UI2.WinForms.Guna2DataGridView();
             this.pnlInput = new Guna.UI2.WinForms.Guna2Panel();
@@ -45,26 +44,12 @@ namespace WinRap.ViewLINQ
             // pnlTop
             // 
             this.pnlTop.BackColor = System.Drawing.Color.White;
-            this.pnlTop.Controls.Add(this.btnBack);
             this.pnlTop.Controls.Add(this.lblSubTitle);
             this.pnlTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlTop.Location = new System.Drawing.Point(0, 0);
             this.pnlTop.Name = "pnlTop";
             this.pnlTop.Size = new System.Drawing.Size(1100, 65);
             this.pnlTop.TabIndex = 0;
-            // 
-            // btnBack
-            // 
-            this.btnBack.BorderRadius = 8;
-            this.btnBack.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(242)))), ((int)(((byte)(245)))), ((int)(((byte)(250)))));
-            this.btnBack.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.btnBack.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.btnBack.Location = new System.Drawing.Point(794, 12);
-            this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(120, 35);
-            this.btnBack.TabIndex = 1;
-            this.btnBack.Text = "← Quay lại";
-            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // pnlMain
             // 
@@ -164,7 +149,7 @@ namespace WinRap.ViewLINQ
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(105, 40);
             this.btnCancel.TabIndex = 10;
-            this.btnCancel.Text = "Hủy";
+            this.btnCancel.Text = "Quay lại";
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnSave
@@ -328,7 +313,6 @@ namespace WinRap.ViewLINQ
         #endregion
 
         private Guna.UI2.WinForms.Guna2Panel pnlTop;
-        private Guna.UI2.WinForms.Guna2Button btnBack;
         private Guna.UI2.WinForms.Guna2Panel pnlMain;
         private Guna.UI2.WinForms.Guna2Panel pnlInput;
         private System.Windows.Forms.Label lblSubTitle;

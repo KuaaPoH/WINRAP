@@ -25,6 +25,11 @@ Tài liệu này quy định các tiêu chuẩn bắt buộc khi phát triển d
 - **Chuẩn hóa Giao diện Danh sách:**
     - Loại bỏ tiêu đề lớn trên cùng, thay bằng thanh tìm kiếm (`txtSearch`) và nhãn tổng số (`lblTotalCount`).
     - Nút chức năng (Thêm, Sửa, Xóa, Lưu, Hủy) đặt ở Panel dưới cùng căn lề phải.
+- **Chuẩn hóa Giao diện Đặc biệt (Login, Dashboard):**
+    - Sử dụng `Guna2GradientPanel` để tạo chiều sâu cho phần nền.
+    - Sử dụng `Guna2Elipse` (BorderRadius: 15-20) cho toàn bộ form.
+    - Sử dụng `Guna2ShadowForm` để tăng tính thẩm mỹ.
+    - Sử dụng `Guna2DragControl` cho các form không có Border để người dùng dễ di chuyển.
 - **Data Binding (Hiển thị dữ liệu):**
     - **BẮT BUỘC** tắt tự động tạo cột: `dgv.AutoGenerateColumns = false;`.
     - Sử dụng `[NotMapped]` trong Class Model (Entity) để tạo các thuộc tính hiển thị (Ví dụ: `TrangThaiDisplay`) thay vì dùng truy vấn `Select` ẩn danh phức tạp trên UI.

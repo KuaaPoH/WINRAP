@@ -32,6 +32,7 @@ namespace WinRap.ViewLINQ
             this.pnlLogo = new Guna.UI2.WinForms.Guna2Panel();
             this.lblLogo = new System.Windows.Forms.Label();
             this.pnlTopBar = new Guna.UI2.WinForms.Guna2Panel();
+            this.lblHello = new System.Windows.Forms.Label();
             this.lblTitle = new System.Windows.Forms.Label();
             this.ctrlClose = new Guna.UI2.WinForms.Guna2ControlBox();
             this.ctrlMaximize = new Guna.UI2.WinForms.Guna2ControlBox();
@@ -304,6 +305,7 @@ namespace WinRap.ViewLINQ
             // pnlTopBar
             // 
             this.pnlTopBar.BackColor = System.Drawing.Color.White;
+            this.pnlTopBar.Controls.Add(this.lblHello);
             this.pnlTopBar.Controls.Add(this.lblTitle);
             this.pnlTopBar.Controls.Add(this.ctrlClose);
             this.pnlTopBar.Controls.Add(this.ctrlMaximize);
@@ -316,6 +318,20 @@ namespace WinRap.ViewLINQ
             this.pnlTopBar.Name = "pnlTopBar";
             this.pnlTopBar.Size = new System.Drawing.Size(950, 70);
             this.pnlTopBar.TabIndex = 1;
+            // 
+            // lblHello
+            // 
+            this.lblHello.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblHello.AutoSize = true;
+            this.lblHello.BackColor = System.Drawing.Color.Transparent;
+            this.lblHello.Font = new System.Drawing.Font("Segoe UI Semibold", 11F, System.Drawing.FontStyle.Bold);
+            this.lblHello.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.lblHello.Location = new System.Drawing.Point(620, 24);
+            this.lblHello.Name = "lblHello";
+            this.lblHello.Size = new System.Drawing.Size(180, 20);
+            this.lblHello.TabIndex = 4;
+            this.lblHello.Text = "Xin chào, Quản trị viên!";
+            this.lblHello.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // lblTitle
             // 
@@ -418,6 +434,7 @@ namespace WinRap.ViewLINQ
         private Guna.UI2.WinForms.Guna2ControlBox ctrlClose;
         private Guna.UI2.WinForms.Guna2ControlBox ctrlMaximize;
         private Guna.UI2.WinForms.Guna2ControlBox ctrlMinimize;
+        private System.Windows.Forms.Label lblHello;
         private System.Windows.Forms.Label lblTitle;
         private Guna.UI2.WinForms.Guna2Panel pnlMain;
         private Guna.UI2.WinForms.Guna2DragControl guna2DragControl1;

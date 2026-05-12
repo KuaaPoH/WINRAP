@@ -105,7 +105,7 @@ namespace WinRap.ViewLINQ
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            ClearForm();
+            frmMain.Instance.container(new frmRoom());
         }
 
         private void ClearForm()
@@ -115,11 +115,6 @@ namespace WinRap.ViewLINQ
             cboType.SelectedIndex = -1;
             cboStatus.SelectedIndex = -1;
             btnSave.Tag = null;
-        }
-
-        private void btnBack_Click(object sender, EventArgs e)
-        {
-            frmMain.Instance.container(new frmRoom());
         }
     }
 }

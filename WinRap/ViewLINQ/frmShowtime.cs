@@ -87,7 +87,6 @@ namespace WinRap.ViewLINQ
 
             btnLuu.Visible = isEditMode;
             btnQuayLai.Visible = isEditMode;
-
             dgvShowtime.Enabled = !isEditMode;
             
             cboMovie.Enabled = isEditMode;

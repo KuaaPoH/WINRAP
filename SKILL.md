@@ -89,5 +89,13 @@ Trình phân tích mã (Parser) của Visual Studio Designer rất nhạy cảm 
 - **Khai báo biến:** Mọi Control UI (Label, Panel, Button...) phải được khai báo làm biến thành viên (Class member), không khai báo cục bộ bên trong hàm.
 - **Khởi tạo:** Luôn dùng `this.control = new ...()` và thiết lập thuộc tính từng dòng riêng biệt. Tránh sử dụng cú pháp Object Initializer `{ Property = Value }` vì nó dễ gây lỗi `Failed to parse method 'InitializeComponent'`.
 
+## 10. Khắc phục lỗi Visual Studio Designer với Guna2
+
+Khi can thiệp trực tiếp vào file `.Designer.cs`, Designer có thể bị treo hoặc báo lỗi "unknown name".
+**Giải pháp:**
+- **Lỗi ép kiểu (CS0029):** Đảm bảo kiểu dữ liệu khi khai báo (dưới cùng file) và khi khởi tạo (trong `InitializeComponent`) phải khớp hoàn toàn. Ví dụ: Khai báo `Guna2GradientPanel` thì phải khởi tạo `new Guna2GradientPanel()`, không được dùng `new Guna2Panel()`.
+- **Lỗi thuộc tính lạ:** Một số thuộc tính như `FillColor2` chỉ có ở `Guna2GradientPanel`. Nếu dùng cho `Guna2Panel` thông thường, Designer sẽ báo lỗi. Hãy kiểm tra chính xác Control nào hỗ trợ thuộc tính đó.
+- **Lỗi 'unknown name':** Nếu gặp lỗi với các thuộc tính như `DockIndicatorPadding`, hãy xóa dòng code đó thủ công trong file `.Designer.cs` để Designer có thể load lại, sau đó thiết lập lại qua cửa sổ Properties nếu cần.
+
 ---
 *Ghi chú: Luôn cập nhật file này khi phát triển xong một logic phức tạp mới.*

@@ -14,10 +14,24 @@ namespace WinRap.ViewLINQ
     public partial class frmMain : Form
     {
         public static frmMain Instance;
+        public string Username, FullName, Role;
+
         public frmMain()
         {
             InitializeComponent();
             Instance = this;
+            lblHello.Text = "Xin chào!";
+        }
+
+        public frmMain(string un, string fn, string ro)
+        {
+            InitializeComponent();
+            Instance = this;
+            Username = un;
+            FullName = fn;
+            Role = ro;
+            this.Text = "Phần mềm quản lý rạp chiếu phim [" + FullName + "]";
+            lblHello.Text = "Xin chào, " + FullName + "!";
         }
 
         public void container(object _form)
@@ -84,8 +98,9 @@ namespace WinRap.ViewLINQ
         {
             if (MessageBox.Show("Bạn có muốn đăng xuất không?", "Thông báo", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                this.Close();
-                // TODO: Hiển thị lại Form Đăng nhập
+                this.Hide();
+                frmLogin f = new frmLogin();
+                f.Show();
             }
         }
     }

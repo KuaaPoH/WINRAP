@@ -36,7 +36,12 @@ Trong thư mục `csdl/`, dự án cung cấp các file cần thiết:
 - Chuột phải vào **Solution 'WinRap'** -> Chọn **Restore NuGet Packages**.
 - Các thư viện **Guna.UI2** và **EntityFramework** sẽ tự động được tải về.
 
-#### 5. Quy trình làm việc (Workflow)
+#### 5. Hệ thống Đăng nhập & Bảo mật
+- **Tài khoản:** Dữ liệu nhân viên được quản lý trong bảng `tblNguoiDung`.
+- **Bảo mật:** Mật khẩu được mã hóa chuẩn **MD5** trước khi lưu và so sánh.
+- **Form khởi động:** Ứng dụng luôn bắt đầu bằng `frmLogin`.
+
+#### 6. Quy trình làm việc (Workflow)
 - **Tạo nhánh mới:** 
   ```bash
   git checkout -b feature/ten-tinh-nang
