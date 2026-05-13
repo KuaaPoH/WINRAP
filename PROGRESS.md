@@ -32,8 +32,14 @@ Dự án xây dựng ứng dụng quản lý rạp chiếu phim bằng **C# Wind
 - [x] **Hệ thống & Bảo mật (Mới):**
     - [x] **frmLogin:** Hoàn thiện giao diện hiện đại (Gradient, Shadow, DragControl) và bảo mật MD5.
     - [x] **frmMain:** Cập nhật Header hiển thị lời chào "Xin chào, [Tên người dùng]!".
-- [ ] **frmTicket:** Lập trình logic Bán vé và Sơ đồ ghế động.
+- [x] **frmTicket:** Lập trình logic Bán vé và Sơ đồ ghế động.
 - [ ] **Thống kê:** Lập trình báo cáo doanh thu.
+
+---
+*Cập nhật ngày: 13/05/2026*
+- [x] Cập nhật logic xử lý hình ảnh an toàn (FileStream, lưu thư mục 'images') trên các form Phim.
+- [x] Áp dụng logic Xóa vật lý (Remove) cho Phim, Nhân viên, Suất chiếu theo chuẩn TH04.
+- [x] Hoàn thiện Bán vé (`frmTicket`, `frmSeatLayout`): Thiết kế lại UI đồng bộ, tải sơ đồ ghế thực tế, thẻ phim bo góc, fix lỗi lưu vé Entity Framework.
 
 ---
 *Cập nhật ngày: 12/05/2026*

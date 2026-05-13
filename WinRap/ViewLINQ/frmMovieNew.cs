@@ -43,20 +43,37 @@ namespace WinRap.ViewLINQ
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
-                ofd.Filter = "Image Files(*.jpg; *.jpeg; *.png)|*.jpg; *.jpeg; *.png";
+                ofd.Filter = "Image Files(*.jpg; *.jpeg; *.png; *.gif; *.bmp)|*.jpg; *.jpeg; *.png; *.gif; *.bmp";
+                ofd.Title = "Chọn ảnh cho phim";
+
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    selectedImagePath = ofd.FileName;
                     try
                     {
-                        using (var temp = Image.FromFile(selectedImagePath))
+                        using (var stream = new FileStream(ofd.FileName, FileMode.Open, FileAccess.Read))
                         {
-                            picPoster.Image = new Bitmap(temp);
+                            if (picPoster.Image != null) picPoster.Image.Dispose();
+                            picPoster.Image = Image.FromStream(stream);
+                            picPoster.SizeMode = PictureBoxSizeMode.Zoom;
                         }
+
+                        string projectPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                        string folderPath = Path.Combine(projectPath, "images");
+
+                        if (!Directory.Exists(folderPath))
+                        {
+                            Directory.CreateDirectory(folderPath);
+                        }
+                        string extension = Path.GetExtension(ofd.FileName);
+                        string timestamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+                        string uniqueFileName = timestamp + extension;
+                        string destPath = Path.Combine(folderPath, uniqueFileName);
+                        File.Copy(ofd.FileName, destPath, true);
+                        selectedImagePath = "images/" + uniqueFileName;
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Không thể tải ảnh: " + ex.Message);
+                        MessageBox.Show("Lỗi khi xử lý ảnh: " + ex.Message);
                     }
                 }
             }
@@ -80,17 +97,6 @@ namespace WinRap.ViewLINQ
                     return;
                 }
 
-           
-                string fileName = "";
-                if (!string.IsNullOrEmpty(selectedImagePath))
-                {
-                    fileName = "movie_" + DateTime.Now.Ticks + Path.GetExtension(selectedImagePath);
-                    string destPath = Path.Combine(Application.StartupPath, "Posters");
-                    if (!Directory.Exists(destPath)) Directory.CreateDirectory(destPath);
-                    File.Copy(selectedImagePath, Path.Combine(destPath, fileName), true);
-                }
-
-             
                 tblPhim phim = new tblPhim
                 {
                     TenPhim = txtTenPhim.Text.Trim(),
@@ -99,7 +105,7 @@ namespace WinRap.ViewLINQ
                     DaoDien = txtDaoDien.Text.Trim(),
                     DienVien = txtDienVien.Text.Trim(),
                     MoTa = txtMoTa.Text.Trim(),
-                    HinhAnh = fileName,
+                    HinhAnh = selectedImagePath,
                     NgayPhatHanh = DateTime.Now,
                     TrangThai = swTrangThai.Checked
                 };

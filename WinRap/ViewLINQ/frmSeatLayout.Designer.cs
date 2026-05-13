@@ -34,16 +34,20 @@ namespace WinRap.ViewLINQ
             this.guna2CircleButton2 = new Guna.UI2.WinForms.Guna2CircleButton();
             this.guna2CircleButton3 = new Guna.UI2.WinForms.Guna2CircleButton();
             this.guna2CircleButton4 = new Guna.UI2.WinForms.Guna2CircleButton();
-            this.lblScreen = new System.Windows.Forms.Label();
+            this.pnlScreenArea = new System.Windows.Forms.Panel();
+            this.pnlScreenLine = new System.Windows.Forms.Panel();
+            this.lblScreenText = new System.Windows.Forms.Label();
             this.pnlTop.SuspendLayout();
             this.pnlBottom.SuspendLayout();
             this.pnlSeats.SuspendLayout();
             this.pnlLegend.SuspendLayout();
+            this.pnlScreenArea.SuspendLayout();
             this.SuspendLayout();
             // 
             // pnlTop
             // 
-            this.pnlTop.BackColor = System.Drawing.Color.White;
+            this.pnlTop.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.pnlTop.Controls.Add(this.btnBack);
             this.pnlTop.Controls.Add(this.lblRoomInfo);
             this.pnlTop.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlTop.Location = new System.Drawing.Point(0, 0);
@@ -53,14 +57,15 @@ namespace WinRap.ViewLINQ
             // 
             // lblRoomInfo
             // 
-            this.lblRoomInfo.AutoSize = true;
+            this.lblRoomInfo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lblRoomInfo.Font = new System.Drawing.Font("Segoe UI", 16F, System.Drawing.FontStyle.Bold);
-            this.lblRoomInfo.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.lblRoomInfo.Location = new System.Drawing.Point(30, 15);
+            this.lblRoomInfo.ForeColor = System.Drawing.Color.White;
+            this.lblRoomInfo.Location = new System.Drawing.Point(0, 0);
             this.lblRoomInfo.Name = "lblRoomInfo";
-            this.lblRoomInfo.Size = new System.Drawing.Size(325, 30);
+            this.lblRoomInfo.Size = new System.Drawing.Size(950, 60);
             this.lblRoomInfo.TabIndex = 0;
             this.lblRoomInfo.Text = "PHÒNG: P01 - SƠ ĐỒ GHẾ";
+            this.lblRoomInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // pnlBottom
             // 
@@ -68,7 +73,6 @@ namespace WinRap.ViewLINQ
             this.pnlBottom.Controls.Add(this.lblTotalPrice);
             this.pnlBottom.Controls.Add(this.lblTotalLabel);
             this.pnlBottom.Controls.Add(this.btnConfirm);
-            this.pnlBottom.Controls.Add(this.btnBack);
             this.pnlBottom.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.pnlBottom.Location = new System.Drawing.Point(0, 638);
             this.pnlBottom.Name = "pnlBottom";
@@ -124,25 +128,55 @@ namespace WinRap.ViewLINQ
             this.btnBack.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
             this.btnBack.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
             this.btnBack.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.btnBack.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(108)))), ((int)(((byte)(117)))), ((int)(((byte)(125)))));
-            this.btnBack.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            this.btnBack.ForeColor = System.Drawing.Color.White;
-            this.btnBack.Location = new System.Drawing.Point(30, 20);
+            this.btnBack.FillColor = System.Drawing.Color.White;
+            this.btnBack.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnBack.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.btnBack.Location = new System.Drawing.Point(20, 12);
             this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(140, 45);
+            this.btnBack.Size = new System.Drawing.Size(100, 36);
             this.btnBack.TabIndex = 0;
-            this.btnBack.Text = "QUAY LẠI";
+            this.btnBack.Text = " QUAY LẠI";
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+            // 
+            // pnlScreenArea
+            // 
+            this.pnlScreenArea.BackColor = System.Drawing.Color.White;
+            this.pnlScreenArea.Controls.Add(this.pnlScreenLine);
+            this.pnlScreenArea.Controls.Add(this.lblScreenText);
+            this.pnlScreenArea.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pnlScreenArea.Location = new System.Drawing.Point(0, 60);
+            this.pnlScreenArea.Name = "pnlScreenArea";
+            this.pnlScreenArea.Size = new System.Drawing.Size(950, 100);
+            this.pnlScreenArea.TabIndex = 3;
+            // 
+            // pnlScreenLine
+            // 
+            this.pnlScreenLine.BackColor = System.Drawing.Color.Black;
+            this.pnlScreenLine.Location = new System.Drawing.Point(175, 40);
+            this.pnlScreenLine.Name = "pnlScreenLine";
+            this.pnlScreenLine.Size = new System.Drawing.Size(600, 6);
+            this.pnlScreenLine.TabIndex = 0;
+            // 
+            // lblScreenText
+            // 
+            this.lblScreenText.AutoSize = true;
+            this.lblScreenText.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.lblScreenText.ForeColor = System.Drawing.Color.Black;
+            this.lblScreenText.Location = new System.Drawing.Point(400, 55);
+            this.lblScreenText.Name = "lblScreenText";
+            this.lblScreenText.Size = new System.Drawing.Size(147, 20);
+            this.lblScreenText.TabIndex = 1;
+            this.lblScreenText.Text = "MÀN HÌNH CHÍNH";
             // 
             // pnlSeats
             // 
             this.pnlSeats.AutoScroll = true;
-            this.pnlSeats.Controls.Add(this.lblScreen);
+            this.pnlSeats.BackColor = System.Drawing.Color.White;
             this.pnlSeats.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlSeats.Location = new System.Drawing.Point(0, 60);
+            this.pnlSeats.Location = new System.Drawing.Point(0, 160);
             this.pnlSeats.Name = "pnlSeats";
             this.pnlSeats.Padding = new System.Windows.Forms.Padding(20);
-            this.pnlSeats.Size = new System.Drawing.Size(950, 578);
+            this.pnlSeats.Size = new System.Drawing.Size(950, 438);
             this.pnlSeats.TabIndex = 2;
             // 
             // pnlLegend
@@ -262,19 +296,6 @@ namespace WinRap.ViewLINQ
             this.guna2CircleButton4.Size = new System.Drawing.Size(20, 20);
             this.guna2CircleButton4.TabIndex = 7;
             // 
-            // lblScreen
-            // 
-            this.lblScreen.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(224)))), ((int)(((byte)(224)))), ((int)(((byte)(224)))));
-            this.lblScreen.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblScreen.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            this.lblScreen.ForeColor = System.Drawing.Color.Gray;
-            this.lblScreen.Location = new System.Drawing.Point(20, 20);
-            this.lblScreen.Name = "lblScreen";
-            this.lblScreen.Size = new System.Drawing.Size(910, 30);
-            this.lblScreen.TabIndex = 0;
-            this.lblScreen.Text = "MÀN HÌNH";
-            this.lblScreen.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // frmSeatLayout
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -315,8 +336,10 @@ namespace WinRap.ViewLINQ
         private Guna.UI2.WinForms.Guna2CircleButton guna2CircleButton3;
         private Guna.UI2.WinForms.Guna2CircleButton guna2CircleButton2;
         private Guna.UI2.WinForms.Guna2CircleButton guna2CircleButton1;
-        private System.Windows.Forms.Label lblScreen;
         private System.Windows.Forms.Label lblTotalLabel;
         private System.Windows.Forms.Label lblTotalPrice;
+        private System.Windows.Forms.Panel pnlScreenArea;
+        private System.Windows.Forms.Panel pnlScreenLine;
+        private System.Windows.Forms.Label lblScreenText;
     }
 }

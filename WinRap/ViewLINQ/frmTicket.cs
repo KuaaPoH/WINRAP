@@ -26,18 +26,25 @@ namespace WinRap.ViewLINQ
 
         private async void frmTicket_Load(object sender, EventArgs e)
         {
-            dtpDate.Value = DateTime.Now;
-            await LoadMoviesByDateAsync(dtpDate.Value);
+            dtpFilterDate.Value = DateTime.Now;
+            await LoadMoviesByDateAsync(dtpFilterDate.Value, txtSearchMovie.Text.Trim());
         }
 
-        private async void dtpDate_ValueChanged(object sender, EventArgs e)
+        private async void dtpFilterDate_ValueChanged(object sender, EventArgs e)
         {
-            await LoadMoviesByDateAsync(dtpDate.Value);
+            await LoadMoviesByDateAsync(dtpFilterDate.Value, txtSearchMovie.Text.Trim());
             cboShowtime.Items.Clear();
             selectedMovieId = -1;
         }
 
-        private async Task LoadMoviesByDateAsync(DateTime date)
+        private async void txtSearchMovie_TextChanged(object sender, EventArgs e)
+        {
+            await LoadMoviesByDateAsync(dtpFilterDate.Value, txtSearchMovie.Text.Trim());
+            cboShowtime.Items.Clear();
+            selectedMovieId = -1;
+        }
+
+        private async Task LoadMoviesByDateAsync(DateTime date, string keyword)
         {
             flpMovies.Controls.Clear();
             
@@ -51,12 +58,17 @@ namespace WinRap.ViewLINQ
                 var listMovies = await Task.Run(() => {
                     using (var context = new DataContext())
                     {
-                        return (from sc in context.SuatChieus
-                                join p in context.Phims on sc.MaPhim equals p.MaPhim
-                                where sc.NgayChieu == date.Date && sc.TrangThai == true
-                                select p)
-                                .Distinct()
-                                .ToList();
+                        var query = (from sc in context.SuatChieus
+                                     join p in context.Phims on sc.MaPhim equals p.MaPhim
+                                     where sc.NgayChieu == date.Date && sc.TrangThai == true
+                                     select p).Distinct();
+
+                        if (!string.IsNullOrEmpty(keyword))
+                        {
+                            query = query.Where(p => p.TenPhim.ToLower().Contains(keyword.ToLower()));
+                        }
+
+                        return query.ToList();
                     }
                 });
 
@@ -64,7 +76,7 @@ namespace WinRap.ViewLINQ
 
                 if (listMovies.Count == 0)
                 {
-                    flpMovies.Controls.Add(new Label { Text = "Không có phim nào có suất chiếu trong ngày này.", AutoSize = true });
+                    flpMovies.Controls.Add(new Label { Text = "Không có phim nào phù hợp điều kiện tìm kiếm.", AutoSize = true });
                     return;
                 }
 
@@ -83,7 +95,7 @@ namespace WinRap.ViewLINQ
         private void CreateMovieCard(int id, string title, string imgPath)
         {
             Guna2GradientPanel card = new Guna2GradientPanel();
-            card.Size = new Size(180, 270);
+            card.Size = new Size(180, 310);
             card.BorderRadius = 15;
             card.FillColor = Color.White;
             card.FillColor2 = Color.White;
@@ -97,19 +109,31 @@ namespace WinRap.ViewLINQ
             card.ShadowDecoration.Depth = 5;
             card.ShadowDecoration.Color = Color.FromArgb(100, 0, 0, 0);
 
-            PictureBox pic = new PictureBox();
-            pic.Size = new Size(180, 220);
+            Guna2PictureBox pic = new Guna2PictureBox();
+            pic.Size = new Size(180, 260);
             pic.SizeMode = PictureBoxSizeMode.StretchImage;
             pic.Dock = DockStyle.Top;
             pic.Cursor = Cursors.Hand;
+            pic.BorderRadius = 15;
+            pic.CustomizableEdges.BottomLeft = false;
+            pic.CustomizableEdges.BottomRight = false;
             
-            if (!string.IsNullOrEmpty(imgPath) && File.Exists(imgPath))
+            if (!string.IsNullOrEmpty(imgPath))
             {
                 try {
-                    // Tải ảnh không giữ file lock
-                    using (var temp = Image.FromFile(imgPath))
+                    string projectPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                    string fullPath = Path.Combine(projectPath, imgPath);
+                    if (File.Exists(fullPath))
                     {
-                        pic.Image = new Bitmap(temp);
+                        using (var stream = new FileStream(fullPath, FileMode.Open, FileAccess.Read))
+                        {
+                            if (pic.Image != null) pic.Image.Dispose();
+                            pic.Image = Image.FromStream(stream);
+                        }
+                    }
+                    else
+                    {
+                        pic.BackColor = Color.FromArgb(242, 245, 250);
                     }
                 } catch {
                     pic.BackColor = Color.FromArgb(242, 245, 250);
@@ -157,7 +181,7 @@ namespace WinRap.ViewLINQ
             selectedMovieCard.FillColor = Color.FromArgb(240, 245, 255);
             selectedMovieCard.FillColor2 = Color.FromArgb(240, 245, 255);
 
-            await LoadShowtimesAsync(movieId, dtpDate.Value);
+            await LoadShowtimesAsync(movieId, dtpFilterDate.Value);
         }
 
         private async Task LoadShowtimesAsync(int movieId, DateTime date)
@@ -214,24 +238,7 @@ namespace WinRap.ViewLINQ
             var selectedSC = (dynamic)cboShowtime.SelectedItem;
             int maSuatChieu = selectedSC.ID;
 
-           
-            var info = (from sc in db.SuatChieus
-                        join p in db.PhongChieus on sc.MaPhong equals p.MaPhong
-                        where sc.MaSuatChieu == maSuatChieu
-                        select new {
-                            p.SoHang,
-                            p.SoCot,
-                            p.TenPhong
-                        }).FirstOrDefault();
-
-            if (info != null)
-            {
-                int rows = info.SoHang ?? 0;
-                int cols = info.SoCot ?? 0;
-                string roomName = info.TenPhong;
-
-                frmMain.Instance.container(new frmSeatLayout(rows, cols, roomName));
-            }
+            frmMain.Instance.container(new frmSeatLayout(maSuatChieu));
         }
     }
 }

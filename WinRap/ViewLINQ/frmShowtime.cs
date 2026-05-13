@@ -268,7 +268,7 @@ namespace WinRap.ViewLINQ
             if (dgvShowtime.CurrentRow != null)
             {
                 int maSC = Convert.ToInt32(dgvShowtime.CurrentRow.Cells["MaSuatChieu"].Value);
-                if (MessageBox.Show("Bạn có muốn xóa suất chiếu này không?", "Thông báo", MessageBoxButtons.YesNo, MessageBoxIcon.Stop) == DialogResult.Yes)
+                if (MessageBox.Show("Bạn có muốn xóa suất chiếu này khỏi hệ thống?", "Thông báo", MessageBoxButtons.YesNo, MessageBoxIcon.Stop) == DialogResult.Yes)
                 {
                     try
                     {
@@ -276,6 +276,7 @@ namespace WinRap.ViewLINQ
                         var item = db.SuatChieus.SingleOrDefault(u => u.MaSuatChieu == maSC);
                         if (item != null)
                         {
+                            // THỰC HIỆN XÓA VẬT LÝ THEO TH04
                             db.SuatChieus.Remove(item);
                             db.SaveChanges();
                             MessageBox.Show("Đã xóa thành công!");

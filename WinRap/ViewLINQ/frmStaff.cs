@@ -99,7 +99,7 @@ namespace WinRap.ViewLINQ
                 return;
             }
 
-            if (MessageBox.Show("Bạn có chắc chắn muốn xóa nhân viên này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Stop) == DialogResult.Yes)
+            if (MessageBox.Show("Bạn có chắc chắn muốn xóa nhân viên này khỏi hệ thống?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Stop) == DialogResult.Yes)
             {
                 try
                 {
@@ -108,6 +108,7 @@ namespace WinRap.ViewLINQ
 
                     if (nv != null)
                     {
+                        // THỰC HIỆN XÓA VẬT LÝ THEO TH04
                         db.NguoiDungs.Remove(nv);
                         db.SaveChanges();
                         MessageBox.Show("Xóa nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);

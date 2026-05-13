@@ -130,15 +130,16 @@ namespace WinRap.ViewLINQ
 
                 int maPhim = (int)dgvMovie.CurrentRow.Cells["MaPhim"].Value;
 
-                if (MessageBox.Show("Bạn có chắc muốn xóa phim này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Stop) == DialogResult.Yes)
+                if (MessageBox.Show("Bạn có chắc muốn xóa phim này khỏi hệ thống?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Stop) == DialogResult.Yes)
                 {
                    
                     var phim = db.Phims.SingleOrDefault(p => p.MaPhim == maPhim);
                     if (phim != null)
                     {
+                        // THỰC HIỆN XÓA VẬT LÝ THEO TH04
                         db.Phims.Remove(phim);
                         db.SaveChanges();
-                        MessageBox.Show("Xóa phim thành công!");
+                        MessageBox.Show("Xóa phim thành công!", "Thông báo");
                         LoadGridData();
                     }
                 }

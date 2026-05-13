@@ -60,14 +60,22 @@ namespace WinRap.ViewLINQ
 
                     if (!string.IsNullOrEmpty(movie.HinhAnh))
                     {
-                        string path = Path.Combine(Application.StartupPath, "Posters", movie.HinhAnh);
-                        if (File.Exists(path))
+                        try
                         {
-                            using (var temp = Image.FromFile(path))
+                            string projectPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+                            string path = Path.Combine(projectPath, movie.HinhAnh);
+                            if (File.Exists(path))
                             {
-                                picPoster.Image = new Bitmap(temp);
+                                using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read))
+                                {
+                                    if (picPoster.Image != null) picPoster.Image.Dispose();
+                                    picPoster.Image = Image.FromStream(stream);
+                                    picPoster.SizeMode = PictureBoxSizeMode.Zoom;
+                                }
                             }
+                            else picPoster.Image = null;
                         }
+                        catch { picPoster.Image = null; }
                     }
                 }
             }
