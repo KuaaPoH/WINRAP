@@ -99,42 +99,13 @@ namespace WinRap.ViewLINQ
 
         private void AddRoomCard(int maPhong, string name, string type, int totalSeats, int soldSeats, string currentMovie, string status, Color statusColor, DateTime? startTime, DateTime? endTime)
         {
-            Guna2GradientPanel card = new Guna2GradientPanel { Size = new Size(270, 230), FillColor = Color.White, FillColor2 = Color.White, BorderRadius = 15, Margin = new Padding(15), Cursor = Cursors.Hand };
-            card.ShadowDecoration.Enabled = true; card.ShadowDecoration.BorderRadius = 15; card.ShadowDecoration.Depth = 5;
-
-            Label lblName = new Label { Text = name, Font = new Font("Segoe UI", 13F, FontStyle.Bold), ForeColor = Color.FromArgb(64, 64, 64), Location = new Point(15, 12), AutoSize = true };
-            Label lblType = new Label { Text = type, Font = new Font("Segoe UI", 8F, FontStyle.Bold), ForeColor = Color.White, BackColor = Color.FromArgb(94, 148, 255), Padding = new Padding(5, 2, 5, 2), Location = new Point(200, 15), AutoSize = true };
-            Label lblMovieTitle = new Label { Text = "🎬 " + (currentMovie == "N/A" ? "(Trống)" : currentMovie), Font = new Font("Segoe UI", 10F, FontStyle.Bold), ForeColor = currentMovie == "N/A" ? Color.Silver : Color.FromArgb(94, 148, 255), Location = new Point(15, 45), Size = new Size(240, 25) };
-
-            string remainingText = ""; Color remainingColor = Color.FromArgb(255, 82, 82);
-            if (endTime.HasValue)
-            {
-                TimeSpan remaining = endTime.Value - DateTime.Now;
-                if (remaining.TotalMinutes > 0 && startTime.Value <= DateTime.Now) remainingText = $"⏳ Còn {Math.Ceiling(remaining.TotalMinutes)}p";
-                else if (remaining.TotalMinutes <= 0 && startTime.Value <= DateTime.Now) { remainingText = "✅ Hết phim"; remainingColor = Color.FromArgb(0, 184, 152); }
-                else if (startTime.Value > DateTime.Now) { remainingText = $"🕒 {startTime.Value:HH:mm}"; remainingColor = Color.FromArgb(255, 159, 67); }
-            }
-
-            Label lblRemaining = new Label { Text = remainingText, Font = new Font("Segoe UI", 9F, FontStyle.Bold), ForeColor = remainingColor, Location = new Point(150, 75), Size = new Size(110, 20), TextAlign = ContentAlignment.MiddleRight };
-            int percentage = totalSeats > 0 ? (soldSeats * 100 / totalSeats) : 0;
-            Label lblTicketInfo = new Label { Text = $"Vé: {soldSeats}/{totalSeats}", Font = new Font("Segoe UI", 9F, FontStyle.Bold), ForeColor = Color.FromArgb(64, 64, 64), Location = new Point(15, 80), AutoSize = true };
-
-            Guna2ProgressBar pbOccupancy = new Guna2ProgressBar { Size = new Size(240, 10), Location = new Point(15, 105), BorderRadius = 5, Value = percentage, FillColor = Color.FromArgb(242, 245, 250), ProgressColor = percentage > 80 ? Color.FromArgb(255, 82, 82) : Color.FromArgb(94, 148, 255), ProgressColor2 = percentage > 80 ? Color.FromArgb(255, 82, 82) : Color.FromArgb(94, 148, 255) };
-            Guna2CirclePictureBox dot = new Guna2CirclePictureBox { Size = new Size(8, 8), FillColor = statusColor, Location = new Point(18, 135) };
-            Label lblStatus = new Label { Text = status, Font = new Font("Segoe UI", 8.5F, FontStyle.Italic), ForeColor = statusColor, Location = new Point(30, 132), AutoSize = true };
-            
-            Guna2Button btnView = new Guna2Button { Text = "Giám sát ghế", Size = new Size(240, 35), Location = new Point(15, 175), BorderRadius = 8, FillColor = Color.FromArgb(242, 245, 250), ForeColor = Color.FromArgb(94, 148, 255), Font = new Font("Segoe UI", 9F, FontStyle.Bold), Tag = maPhong };
-            btnView.Click += BtnView_Click;
-
-            card.Controls.Add(lblName); card.Controls.Add(lblType); card.Controls.Add(lblMovieTitle); card.Controls.Add(lblRemaining); card.Controls.Add(lblTicketInfo); card.Controls.Add(pbOccupancy); card.Controls.Add(dot); card.Controls.Add(lblStatus); card.Controls.Add(btnView);
+            ucRoomCard card = new ucRoomCard();
+            card.SetData(maPhong, name, type, totalSeats, soldSeats, currentMovie, status, statusColor, startTime, endTime);
+            card.ViewDetailClick += (s, ev) => {
+                frmRoomEdit frm = new frmRoomEdit(maPhong);
+                frmMain.Instance.container(frm);
+            };
             flpRooms.Controls.Add(card);
-        }
-
-        private void BtnView_Click(object sender, EventArgs e)
-        {
-            int maPhong = (int)((Guna2Button)sender).Tag;
-            frmRoomEdit frm = new frmRoomEdit(maPhong); 
-            frmMain.Instance.container(frm);
         }
     }
 }

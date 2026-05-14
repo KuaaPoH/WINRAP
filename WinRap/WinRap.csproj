@@ -104,6 +104,12 @@
     <Compile Include="ViewLINQ\frmRoom.Designer.cs">
       <DependentUpon>frmRoom.cs</DependentUpon>
     </Compile>
+    <Compile Include="ViewLINQ\ucRoomCard.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ViewLINQ\ucRoomCard.Designer.cs">
+      <DependentUpon>ucRoomCard.cs</DependentUpon>
+    </Compile>
     <Compile Include="ViewLINQ\frmRoomConfig.cs">
       <SubType>Form</SubType>
     </Compile>
