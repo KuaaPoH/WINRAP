@@ -102,6 +102,7 @@ namespace WinRap.ViewLINQ
             this.txtSearch.PlaceholderText = "Tìm phòng...";
             this.txtSearch.Size = new System.Drawing.Size(250, 35);
             this.txtSearch.TabIndex = 0;
+            this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
             // 
             // pnlMainContainer
             // 

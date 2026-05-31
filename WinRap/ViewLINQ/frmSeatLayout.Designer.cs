@@ -146,13 +146,13 @@ namespace WinRap.ViewLINQ
             this.pnlScreenArea.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlScreenArea.Location = new System.Drawing.Point(0, 60);
             this.pnlScreenArea.Name = "pnlScreenArea";
-            this.pnlScreenArea.Size = new System.Drawing.Size(950, 100);
+            this.pnlScreenArea.Size = new System.Drawing.Size(950, 60);
             this.pnlScreenArea.TabIndex = 3;
             // 
             // pnlScreenLine
             // 
             this.pnlScreenLine.BackColor = System.Drawing.Color.Black;
-            this.pnlScreenLine.Location = new System.Drawing.Point(175, 40);
+            this.pnlScreenLine.Location = new System.Drawing.Point(175, 15);
             this.pnlScreenLine.Name = "pnlScreenLine";
             this.pnlScreenLine.Size = new System.Drawing.Size(600, 6);
             this.pnlScreenLine.TabIndex = 0;
@@ -160,11 +160,11 @@ namespace WinRap.ViewLINQ
             // lblScreenText
             // 
             this.lblScreenText.AutoSize = true;
-            this.lblScreenText.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.lblScreenText.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.lblScreenText.ForeColor = System.Drawing.Color.Black;
-            this.lblScreenText.Location = new System.Drawing.Point(400, 55);
+            this.lblScreenText.Location = new System.Drawing.Point(415, 30);
             this.lblScreenText.Name = "lblScreenText";
-            this.lblScreenText.Size = new System.Drawing.Size(147, 20);
+            this.lblScreenText.Size = new System.Drawing.Size(133, 19);
             this.lblScreenText.TabIndex = 1;
             this.lblScreenText.Text = "MÀN HÌNH CHÍNH";
             // 
@@ -173,10 +173,10 @@ namespace WinRap.ViewLINQ
             this.pnlSeats.AutoScroll = true;
             this.pnlSeats.BackColor = System.Drawing.Color.White;
             this.pnlSeats.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pnlSeats.Location = new System.Drawing.Point(0, 160);
+            this.pnlSeats.Location = new System.Drawing.Point(0, 120);
             this.pnlSeats.Name = "pnlSeats";
             this.pnlSeats.Padding = new System.Windows.Forms.Padding(20);
-            this.pnlSeats.Size = new System.Drawing.Size(950, 438);
+            this.pnlSeats.Size = new System.Drawing.Size(950, 478);
             this.pnlSeats.TabIndex = 2;
             // 
             // pnlLegend

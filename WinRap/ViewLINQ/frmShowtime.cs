@@ -24,8 +24,8 @@ namespace WinRap.ViewLINQ
 
         private void frmShowtime_Load(object sender, EventArgs e)
         {
-            LoadGridData();
             LoadCombobox();
+            LoadGridData();
             SwitchMode(false);
         }
 
@@ -34,14 +34,26 @@ namespace WinRap.ViewLINQ
             try
             {
                 var phims = db.Phims.Where(p => p.TrangThai == true).ToList();
-                cboMovie.DataSource = phims;
                 cboMovie.DisplayMember = "TenPhim";
                 cboMovie.ValueMember = "MaPhim";
+                cboMovie.DataSource = phims;
 
                 var phongs = db.PhongChieus.Where(p => p.TrangThai == "Sẵn sàng").ToList();
-                cboRoom.DataSource = phongs;
                 cboRoom.DisplayMember = "TenPhong";
                 cboRoom.ValueMember = "MaPhong";
+                cboRoom.DataSource = phongs;
+
+                // Nạp cho combo lọc
+                var phongsFilter = db.PhongChieus.Select(p => new { p.MaPhong, p.TenPhong }).ToList();
+                var allRooms = new[] { new { MaPhong = -1, TenPhong = "--- Tất cả phòng ---" } }.ToList();
+                var combined = allRooms.Concat(phongsFilter).ToList();
+
+                cboFilterRoom.DisplayMember = "TenPhong";
+                cboFilterRoom.ValueMember = "MaPhong";
+                cboFilterRoom.DataSource = combined;
+                cboFilterRoom.SelectedIndex = 0;
+
+                dtpFilterDate.Value = DateTime.Now;
             }
             catch (Exception ex)
             {
@@ -53,28 +65,68 @@ namespace WinRap.ViewLINQ
         {
             try
             {
-               
-                var data = (from s in db.SuatChieus
-                           join p in db.Phims on s.MaPhim equals p.MaPhim
-                           join r in db.PhongChieus on s.MaPhong equals r.MaPhong
-                           select new
-                           {
-                               s.MaSuatChieu,
-                               TenPhim = p.TenPhim,
-                               TenPhong = r.TenPhong,
-                               s.NgayChieu,
-                               s.GioBatDau,
-                               GiaVe = s.GiaVeCoBan
-                           })
-                           .OrderByDescending(x => x.NgayChieu)
-                           .ToList();
+                if (cboFilterRoom.SelectedValue == null || !(cboFilterRoom.SelectedValue is int))
+                {
+                    // Nếu là kiểu nặc danh (lần đầu nạp), cần ép kiểu cẩn thận
+                    if (cboFilterRoom.SelectedValue != null)
+                    {
+                        try 
+                        {
+                            int val = Convert.ToInt32(cboFilterRoom.SelectedValue);
+                            FilterAndBind(val);
+                        }
+                        catch { }
+                    }
+                    return;
+                }
 
-                dgvShowtime.DataSource = data;
+                int filterRoom = (int)cboFilterRoom.SelectedValue;
+                FilterAndBind(filterRoom);
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Lỗi tải dữ liệu: " + ex.Message);
             }
+        }
+
+        private void FilterAndBind(int filterRoom)
+        {
+            DateTime filterDate = dtpFilterDate.Value.Date;
+
+            var query = from s in db.SuatChieus
+                        join p in db.Phims on s.MaPhim equals p.MaPhim
+                        join r in db.PhongChieus on s.MaPhong equals r.MaPhong
+                        where DbFunctions.TruncateTime(s.NgayChieu) == filterDate
+                        select new { s, p, r };
+
+            if (filterRoom != -1)
+            {
+                query = query.Where(x => x.s.MaPhong == filterRoom);
+            }
+
+            var data = query.Select(x => new
+            {
+                x.s.MaSuatChieu,
+                TenPhim = x.p.TenPhim,
+                TenPhong = x.r.TenPhong,
+                x.s.NgayChieu,
+                x.s.GioBatDau,
+                GiaVe = x.s.GiaVeCoBan
+            })
+            .OrderBy(x => x.GioBatDau)
+            .ToList();
+
+            dgvShowtime.DataSource = data;
+        }
+
+        private void dtpFilterDate_ValueChanged(object sender, EventArgs e)
+        {
+            LoadGridData();
+        }
+
+        private void cboFilterRoom_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadGridData();
         }
 
        
@@ -276,7 +328,7 @@ namespace WinRap.ViewLINQ
                         var item = db.SuatChieus.SingleOrDefault(u => u.MaSuatChieu == maSC);
                         if (item != null)
                         {
-                            // THỰC HIỆN XÓA VẬT LÝ THEO TH04
+                           
                             db.SuatChieus.Remove(item);
                             db.SaveChanges();
                             MessageBox.Show("Đã xóa thành công!");

@@ -22,13 +22,13 @@ namespace WinRap.ViewLINQ
         private decimal totalPrice = 0;
         private Timer _refreshTimer;
 
-        // Chuẩn màu sắc từ frmRoomEdit
         private readonly Color clrGheThuong = Color.FromArgb(74, 101, 114); 
         private readonly Color clrGheVip = Color.FromArgb(231, 76, 60);     
         private readonly Color clrGheDaBan = Color.FromArgb(149, 165, 166); 
         private readonly Color clrGheDangChon = Color.FromArgb(94, 148, 255);
 
         private Dictionary<int, Guna2Button> _seatButtons = new Dictionary<int, Guna2Button>();
+        private Dictionary<string, Label> _rowLabels = new Dictionary<string, Label>();
         private bool _isDataLoaded = false;
 
         public frmSeatLayout(int maSuatChieu)
@@ -37,7 +37,6 @@ namespace WinRap.ViewLINQ
             _maSuatChieu = maSuatChieu;
             this.DoubleBuffered = true;
 
-            // Lấy thông tin suất chiếu
             var sc = db.SuatChieus.Find(_maSuatChieu);
             if (sc != null)
             {
@@ -51,7 +50,7 @@ namespace WinRap.ViewLINQ
                 if (_isDataLoaded) RepositionSeats();
             };
 
-            // Timer cập nhật trạng thái real-time
+        
             _refreshTimer = new Timer();
             _refreshTimer.Interval = 5000;
             _refreshTimer.Tick += async (s, e) => await UpdateRealtimeStatus();
@@ -78,6 +77,7 @@ namespace WinRap.ViewLINQ
         {
             pnlSeats.Controls.Clear();
             _seatButtons.Clear();
+            _rowLabels.Clear();
 
             try
             {
@@ -100,13 +100,30 @@ namespace WinRap.ViewLINQ
                 });
 
                 pnlSeats.SuspendLayout();
+
+                // Tạo nhãn hàng bên trái (A, B, C...)
+                var distinctRows = listGhe.Select(g => g.Hang).Distinct().OrderBy(h => h).ToList();
+                foreach (var hang in distinctRows)
+                {
+                    Label lblHang = new Label();
+                    lblHang.Text = hang;
+                    lblHang.AutoSize = false;
+                    lblHang.Size = new Size(30, 38);
+                    lblHang.Font = new Font("Segoe UI", 9, FontStyle.Bold);
+                    lblHang.ForeColor = Color.DimGray;
+                    lblHang.TextAlign = ContentAlignment.MiddleCenter;
+                    _rowLabels.Add(hang, lblHang);
+                    pnlSeats.Controls.Add(lblHang);
+                }
+
                 foreach (var ghe in listGhe)
                 {
                     Guna2Button btnSeat = new Guna2Button();
-                    btnSeat.Text = ghe.TenGhe;
-                    btnSeat.Size = new Size(45, 45);
-                    btnSeat.BorderRadius = 6;
-                    btnSeat.Font = new Font("Segoe UI", 8, FontStyle.Bold);
+                    btnSeat.Text = ghe.Cot.ToString(); // Chỉ hiển thị số ghế
+                    btnSeat.Size = new Size(38, 38);
+                    btnSeat.BorderRadius = 5;
+                    btnSeat.Font = new Font("Segoe UI", 6.5f, FontStyle.Bold);
+                    btnSeat.Padding = new Padding(0);
                     btnSeat.Cursor = Cursors.Hand;
                     btnSeat.Tag = ghe;
 
@@ -130,23 +147,34 @@ namespace WinRap.ViewLINQ
         {
             if (_seatButtons.Count == 0) return;
 
-            int seatWidth = 45;
-            int seatHeight = 45;
-            int margin = 8;
+            int seatWidth = 38;
+            int seatHeight = 38;
+            int margin = 6;
+            int rowLabelWidth = 40;
 
             var listGhe = _seatButtons.Values.Select(b => (dynamic)b.Tag).ToList();
             int maxCol = listGhe.Max(g => (int)(g.Cot ?? 1));
-            int totalWidth = maxCol * (seatWidth + margin) - margin;
+            int totalWidth = maxCol * (seatWidth + margin) - margin + rowLabelWidth;
             int startX = (pnlSeats.Width - totalWidth) / 2;
             if (startX < 20) startX = 20;
 
             int startY = 20;
 
             pnlSeats.SuspendLayout();
+
+            // Đặt vị trí nhãn hàng (A, B, C...)
+            foreach (var entry in _rowLabels)
+            {
+                int rowIdx = entry.Key[0] - 'A';
+                entry.Value.Location = new Point(startX, startY + rowIdx * (seatHeight + margin));
+                entry.Value.Size = new Size(rowLabelWidth - 10, seatHeight);
+            }
+
+            // Đặt vị trí các ghế
             foreach (var btn in _seatButtons.Values)
             {
                 dynamic ghe = btn.Tag;
-                int x = startX + ((ghe.Cot ?? 1) - 1) * (seatWidth + margin);
+                int x = startX + rowLabelWidth + ((ghe.Cot ?? 1) - 1) * (seatWidth + margin);
                 int rowIdx = ghe.Hang[0] - 'A';
                 int y = startY + rowIdx * (seatHeight + margin);
                 btn.Location = new Point(x, y);
@@ -233,9 +261,8 @@ namespace WinRap.ViewLINQ
             {
                 try
                 {
-                    int maNguoiDung = 1; // Mặc định nếu không tìm thấy
-                    
-                    // Lấy ID người dùng thực tế đang đăng nhập
+                    int maNguoiDung = 1; 
+                 
                     if (frmMain.Instance != null && !string.IsNullOrEmpty(frmMain.Instance.Username))
                     {
                         var currentUser = db.NguoiDungs.FirstOrDefault(u => u.TenDangNhap == frmMain.Instance.Username);
@@ -246,7 +273,7 @@ namespace WinRap.ViewLINQ
                     }
                     else 
                     {
-                        // Nếu đang test mà không qua form Login, lấy tạm user đầu tiên trong DB
+                     
                         var firstUser = db.NguoiDungs.FirstOrDefault();
                         if (firstUser != null) maNguoiDung = firstUser.MaNguoiDung;
                     }
@@ -259,7 +286,7 @@ namespace WinRap.ViewLINQ
                             MaSuatChieu = _maSuatChieu,
                             MaGhe = maGhe,
                             MaNguoiDung = maNguoiDung,
-                            MaKhachHang = null, // Có thể cập nhật thêm tính năng khách hàng thân thiết sau
+                            MaKhachHang = null, 
                             NgayDat = DateTime.Now,
                             TongTien = _giaGoc + (ghe.GiaPhuThu ?? 0),
                             TrangThai = "Đã bán"

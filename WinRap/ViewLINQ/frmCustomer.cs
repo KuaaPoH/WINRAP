@@ -86,10 +86,47 @@ namespace WinRap.ViewLINQ
 
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
+            ApplyFilters();
         }
 
         private void cboFilterTier_SelectedIndexChanged(object sender, EventArgs e)
         {
+            ApplyFilters();
+        }
+
+        private void ApplyFilters()
+        {
+            try
+            {
+                string search = txtSearch.Text.ToLower().Trim();
+                int tierIndex = cboFilterTier.SelectedIndex;
+
+                var query = db.KhachHangs.AsQueryable();
+
+                // 1. Lọc theo tên hoặc số điện thoại
+                if (!string.IsNullOrEmpty(search))
+                {
+                    query = query.Where(k => k.HoTen.ToLower().Contains(search) || k.SoDienThoai.Contains(search));
+                }
+
+                // 2. Lọc theo điểm tích lũy
+                if (tierIndex == 1) // Dưới 1000
+                {
+                    query = query.Where(k => k.DiemTichLuy < 1000 || k.DiemTichLuy == null);
+                }
+                else if (tierIndex == 2) // 1000 - 5000
+                {
+                    query = query.Where(k => k.DiemTichLuy >= 1000 && k.DiemTichLuy <= 5000);
+                }
+                else if (tierIndex == 3) // Trên 5000
+                {
+                    query = query.Where(k => k.DiemTichLuy > 5000);
+                }
+
+                dgvCustomer.DataSource = query.ToList();
+                lblTotalCount.Text = "Tổng: " + dgvCustomer.Rows.Count.ToString() + " khách hàng";
+            }
+            catch { }
         }
 
         private void btnLamMoi_Click(object sender, EventArgs e)

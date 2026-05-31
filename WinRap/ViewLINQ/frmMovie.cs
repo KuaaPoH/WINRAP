@@ -136,7 +136,7 @@ namespace WinRap.ViewLINQ
                     var phim = db.Phims.SingleOrDefault(p => p.MaPhim == maPhim);
                     if (phim != null)
                     {
-                        // THỰC HIỆN XÓA VẬT LÝ THEO TH04
+                     
                         db.Phims.Remove(phim);
                         db.SaveChanges();
                         MessageBox.Show("Xóa phim thành công!", "Thông báo");

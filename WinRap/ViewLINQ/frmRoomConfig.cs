@@ -39,7 +39,7 @@ namespace WinRap.ViewLINQ
                         p.MoTaKyThuat
                     }).OrderBy(p => p.MaPhong).ToListAsync();
 
-                    // Khởi tạo cột thủ công để đảm bảo Width 40 cho ID
+                  
                     if (dgvRooms.Columns.Count == 0)
                     {
                         dgvRooms.AutoGenerateColumns = false;

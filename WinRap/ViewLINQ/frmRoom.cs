@@ -26,6 +26,11 @@ namespace WinRap.ViewLINQ
             await LoadDataAsync();
         }
 
+        private async void txtSearch_TextChanged(object sender, EventArgs e)
+        {
+            await LoadDataAsync();
+        }
+
         private void btnTab_Click(object sender, EventArgs e)
         {
             Guna2Button btn = sender as Guna2Button;
@@ -40,7 +45,7 @@ namespace WinRap.ViewLINQ
             this.SuspendLayout();
             try 
             {
-                await LoadRoomCardsAsync();
+                await LoadRoomCardsAsync(txtSearch.Text.Trim());
             }
             finally 
             {
@@ -50,19 +55,27 @@ namespace WinRap.ViewLINQ
 
         private async void btnRefresh_Click(object sender, EventArgs e)
         {
+            txtSearch.Text = "";
             await LoadDataAsync();
         }
 
-        private async Task LoadRoomCardsAsync()
+        private async Task LoadRoomCardsAsync(string search = "")
         {
             try
             {
                 flpRooms.Controls.Clear();
                 DateTime now = DateTime.Now;
+                string searchLower = search.ToLower();
 
                 using (var db = new DataContext())
                 {
-                    var rooms = await db.PhongChieus.ToListAsync();
+                    var roomsQuery = db.PhongChieus.AsQueryable();
+                    if (!string.IsNullOrEmpty(search))
+                    {
+                        roomsQuery = roomsQuery.Where(r => r.TenPhong.ToLower().Contains(searchLower));
+                    }
+
+                    var rooms = await roomsQuery.ToListAsync();
 
                     foreach (var room in rooms)
                     {

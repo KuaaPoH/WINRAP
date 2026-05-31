@@ -362,6 +362,7 @@ namespace WinRap.ViewLINQ
             this.cboFilterRoom.Name = "cboFilterRoom";
             this.cboFilterRoom.Size = new System.Drawing.Size(200, 36);
             this.cboFilterRoom.TabIndex = 3;
+            this.cboFilterRoom.SelectedIndexChanged += new System.EventHandler(this.cboFilterRoom_SelectedIndexChanged);
             // 
             // lblFilterRoom
             // 
@@ -389,6 +390,7 @@ namespace WinRap.ViewLINQ
             this.dtpFilterDate.Size = new System.Drawing.Size(170, 36);
             this.dtpFilterDate.TabIndex = 1;
             this.dtpFilterDate.Value = new System.DateTime(2026, 4, 9, 0, 0, 0, 0);
+            this.dtpFilterDate.ValueChanged += new System.EventHandler(this.dtpFilterDate_ValueChanged);
             // 
             // lblFilterDate
             // 

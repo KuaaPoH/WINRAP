@@ -108,7 +108,7 @@ namespace WinRap.ViewLINQ
 
                     if (nv != null)
                     {
-                        // THỰC HIỆN XÓA VẬT LÝ THEO TH04
+
                         db.NguoiDungs.Remove(nv);
                         db.SaveChanges();
                         MessageBox.Show("Xóa nhân viên thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
