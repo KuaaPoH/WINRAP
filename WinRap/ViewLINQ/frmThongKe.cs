@@ -35,14 +35,14 @@ namespace WinRap.ViewLINQ
         {
             try
             {
-                // Thống kê cơ bản
+               
                 decimal totalRevenue = 0;
                 int totalTickets = 0;
                 int totalCustomers = 0;
                 string topMovieName = "N/A";
                 object movieRevenueList = null;
 
-                // Chuẩn hóa ngày
+               
                 DateTime start = fromDate.Date;
                 DateTime end = toDate.Date.AddDays(1).AddSeconds(-1);
 
@@ -50,15 +50,15 @@ namespace WinRap.ViewLINQ
                 {
                     using (var db = new DataContext())
                     {
-                        // 1. Tổng doanh thu và Tổng số vé (Lọc theo ngày)
+                        
                         var tickets = db.Ves.Where(v => v.NgayDat >= start && v.NgayDat <= end).ToList();
                         totalRevenue = tickets.Sum(v => v.TongTien);
                         totalTickets = tickets.Count;
 
-                        // 2. Tổng số khách hàng (Toàn bộ)
+                     
                         totalCustomers = db.KhachHangs.Count();
 
-                        // 3. Phim doanh thu cao nhất & Danh sách doanh thu theo phim (Lọc theo ngày)
+                        
                         var movieGroup = db.Ves
                             .Where(v => v.NgayDat >= start && v.NgayDat <= end)
                             .Join(db.SuatChieus, v => v.MaSuatChieu, sc => sc.MaSuatChieu, (v, sc) => new { v.TongTien, sc.MaPhim })
@@ -91,13 +91,12 @@ namespace WinRap.ViewLINQ
                     }
                 });
 
-                // Cập nhật giao diện
+             
                 lblTotalRevenue.Text = string.Format("{0:N0} VND", totalRevenue);
                 lblTotalTickets.Text = totalTickets.ToString();
                 lblTotalCustomers.Text = totalCustomers.ToString();
                 lblTopMovie.Text = topMovieName;
 
-                // Cập nhật Grid
                 dgvMovieRevenue.DataSource = movieRevenueList;
                 if (dgvMovieRevenue.Columns["TenPhim"] != null) dgvMovieRevenue.Columns["TenPhim"].HeaderText = "Tên Phim";
                 if (dgvMovieRevenue.Columns["SoVeDaBan"] != null) dgvMovieRevenue.Columns["SoVeDaBan"].HeaderText = "Số vé đã bán";

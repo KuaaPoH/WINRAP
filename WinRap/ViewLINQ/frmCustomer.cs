@@ -103,22 +103,22 @@ namespace WinRap.ViewLINQ
 
                 var query = db.KhachHangs.AsQueryable();
 
-                // 1. Lọc theo tên hoặc số điện thoại
+               
                 if (!string.IsNullOrEmpty(search))
                 {
                     query = query.Where(k => k.HoTen.ToLower().Contains(search) || k.SoDienThoai.Contains(search));
                 }
 
-                // 2. Lọc theo điểm tích lũy
-                if (tierIndex == 1) // Dưới 1000
+               
+                if (tierIndex == 1) 
                 {
                     query = query.Where(k => k.DiemTichLuy < 1000 || k.DiemTichLuy == null);
                 }
-                else if (tierIndex == 2) // 1000 - 5000
+                else if (tierIndex == 2) 
                 {
                     query = query.Where(k => k.DiemTichLuy >= 1000 && k.DiemTichLuy <= 5000);
                 }
-                else if (tierIndex == 3) // Trên 5000
+                else if (tierIndex == 3) 
                 {
                     query = query.Where(k => k.DiemTichLuy > 5000);
                 }

@@ -101,7 +101,7 @@ namespace WinRap.ViewLINQ
 
                 pnlSeats.SuspendLayout();
 
-                // Tạo nhãn hàng bên trái (A, B, C...)
+              
                 var distinctRows = listGhe.Select(g => g.Hang).Distinct().OrderBy(h => h).ToList();
                 foreach (var hang in distinctRows)
                 {
@@ -119,7 +119,7 @@ namespace WinRap.ViewLINQ
                 foreach (var ghe in listGhe)
                 {
                     Guna2Button btnSeat = new Guna2Button();
-                    btnSeat.Text = ghe.Cot.ToString(); // Chỉ hiển thị số ghế
+                    btnSeat.Text = ghe.Cot.ToString(); 
                     btnSeat.Size = new Size(38, 38);
                     btnSeat.BorderRadius = 5;
                     btnSeat.Font = new Font("Segoe UI", 6.5f, FontStyle.Bold);
@@ -162,7 +162,7 @@ namespace WinRap.ViewLINQ
 
             pnlSeats.SuspendLayout();
 
-            // Đặt vị trí nhãn hàng (A, B, C...)
+           
             foreach (var entry in _rowLabels)
             {
                 int rowIdx = entry.Key[0] - 'A';
@@ -170,7 +170,7 @@ namespace WinRap.ViewLINQ
                 entry.Value.Size = new Size(rowLabelWidth - 10, seatHeight);
             }
 
-            // Đặt vị trí các ghế
+           
             foreach (var btn in _seatButtons.Values)
             {
                 dynamic ghe = btn.Tag;

@@ -43,7 +43,7 @@ namespace WinRap.ViewLINQ
                 cboRoom.ValueMember = "MaPhong";
                 cboRoom.DataSource = phongs;
 
-                // Nạp cho combo lọc
+            
                 var phongsFilter = db.PhongChieus.Select(p => new { p.MaPhong, p.TenPhong }).ToList();
                 var allRooms = new[] { new { MaPhong = -1, TenPhong = "--- Tất cả phòng ---" } }.ToList();
                 var combined = allRooms.Concat(phongsFilter).ToList();
@@ -67,7 +67,6 @@ namespace WinRap.ViewLINQ
             {
                 if (cboFilterRoom.SelectedValue == null || !(cboFilterRoom.SelectedValue is int))
                 {
-                    // Nếu là kiểu nặc danh (lần đầu nạp), cần ép kiểu cẩn thận
                     if (cboFilterRoom.SelectedValue != null)
                     {
                         try 
@@ -192,6 +191,7 @@ namespace WinRap.ViewLINQ
             ResetInputs();
             SwitchMode(true);
             txtStartTime.Focus();
+            
         }
 
         private void btnSua_Click(object sender, EventArgs e)
@@ -238,6 +238,12 @@ namespace WinRap.ViewLINQ
                 int maPhim = (int)cboMovie.SelectedValue;
                 int maPhong = (int)cboRoom.SelectedValue;
                 DateTime ngayChieu = dtpDate.Value.Date;
+
+                if (ngayChieu.Add(gioBatDau) < DateTime.Now)
+                {
+                    MessageBox.Show("Thời gian bắt đầu suất chiếu không thể ở quá khứ!");
+                    return;
+                }
 
                 var phim = db.Phims.Find(maPhim);
                 TimeSpan duration = TimeSpan.FromMinutes(phim.ThoiLuong + 15);
